@@ -1,0 +1,36 @@
+{
+  "name": "Crazy-Float",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Packages": {
+        "$path": "Packages"
+      },
+      "Shared": {
+        "$path": "src/shared"
+      }
+    },
+
+    "ServerScriptService": {
+      "$className" : "ServerScriptService",
+      "Server": {
+        "$path": "src/server"
+      }
+    },
+
+    "ReplicatedFirst": {
+      "First": {
+        "$path": "src/first"
+      }
+    },
+
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}
