@@ -7,6 +7,7 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
+
 local Thread = require(ReplicatedStorage.Packages.Thread)
 
 local modules = {}; for _,module in pairs(ReplicatedStorage.Shared:GetDescendants()) do if module:IsA('ModuleScript') then modules[tostring(module)]=require(module) end end; Knit.Shared = modules; Knit.shared = modules; Knit.SHARED = modules;
@@ -112,6 +113,31 @@ for _,module in pairs(script.Parent.Controllers:GetDescendants()) do if module:I
     module.tween = Knit.tween
     module.cd = Knit.cd
 end end
+
+local ui = Players.LocalPlayer.PlayerGui
+local inpopup = false
+local toggleData
+Knit.popup = function(popupType, mainText, noText, yesText)
+    if inpopup then return end
+    inpopup = true
+    Knit.popupAnswer = nil
+    if popupType == 'interactive' then
+        ui.Notification.Okay.Frame.TextLabel.Text = mainText or 'No text provided'
+        Knit.toggle('Notification', 'Interactive')
+        toggleData = 'Interactive'
+    elseif popupType == 'okay' then
+        ui.Notification.Interactive.Frame.TextLabel.Text = mainText or 'No text provided'
+        ui.Notification.Interactive.No.Tab.TextLabel.Text = string.upper(noText or 'IGNORE')
+        ui.Notification.Interactive.Yes.Tab.TextLabel.Text = string.upper(yesText or 'ACCEPT')
+        Knit.toggle('Notification', 'Okay')
+        toggleData = 'Okay'
+    end
+    repeat task.wait() until Knit.popupAnswer~=nil
+    Knit.toggle('Notification', toggleData)
+    toggleData = nil
+    Knit.popupAnswer = nil
+    inpopup = false
+end
 
 --warn 'KNIT START'
 Knit.Start():catch(warn)

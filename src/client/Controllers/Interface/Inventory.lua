@@ -8,13 +8,16 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local Inventory = Knit.CreateController { Name = "Inventory" }
 
-function Inventory:KnitStart()
-    self.service.Pull:Connect(function(inventory)
-        self.inventory = inventory
-        local frame = self.ui.Inventory.Frame.Frame.Personal.Personal
-        local item = Knit.cd(frame.Item)
-        for k,v in pairs(inventory) do
+function Inventory:Load(frame, fn)
+    local item = Knit.cd(frame.Item)
+    for k,v in pairs(self.inventory) do
+        if v == 0 and frame:FindFirstChild(k) then
+            frame[k]:Destroy()
+        elseif frame:FindFirstChild(k) then
+            frame[k].Tab.Count.Text = v
+        else
             local newItem = item:Clone()
+            newItem.Name = k
             newItem.Tab.ItemName.Text = k
             newItem.Tab.Count.Text = v
             newItem.Tab.UIStroke.Color = Knit.cfg.Blocks.Rarity[Knit.cfg.Blocks.Blocks[k].Rarity]
@@ -26,10 +29,17 @@ function Inventory:KnitStart()
             viewportCamera.Parent = vf
             viewportCamera.CFrame = CFrame.new(Vector3.new(0, 2, 6), model:GetPivot().Position)
             newItem.Parent = frame
-            self.btn(newItem, function()
-                
-            end)
         end
+        self.btn(frame[k], fn(frame[k]))
+    end
+end
+
+function Inventory:KnitStart()
+    self.service.Pull:Connect(function(inventory)
+        self.inventory = inventory
+        self:Load(self.ui.Inventory.Frame.Frame.Personal.Personal, function(item)
+            print(item)
+        end)
     end)
     --[[ for _,frame in pairs(self.ui.Settings.Frame.Frame.Settings.Settings:GetChildren()) do
         if not frame:IsA('Frame') then continue end
