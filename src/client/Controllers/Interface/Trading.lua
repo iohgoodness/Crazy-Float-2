@@ -17,6 +17,7 @@ function Trading:PlayerAdded()
         playerButton.Parent = self.tradingInviteFrame
         self.btn(playerButton, function()
             self.service:InitiateTrade(player):andThen(function(response)
+                if not response then return end
                 self.txtswap(playerButton.Tab.PlayerName, response)
             end)
         end)
@@ -44,6 +45,7 @@ function Trading:SetupTradeFrame()
             self.tween(self.ui.Trading.Trade, {Position = UDim2.fromScale(0.6, 0.5)}, .61, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
             self.ui.Trading.Select.Visible = true
             self.tween(self.ui.Trading.Select, {Position = UDim2.fromScale(0.18, 0.5)}, .61, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+            self.plusCell = cell
         end)
     end
     for _,cell in pairs(tradeFrame.Recipient.Boxes:GetChildren()) do
@@ -55,9 +57,23 @@ function Trading:SetupTradeFrame()
         Knit.GetController('Front'):Show()
         self.service:CancelTrade()
     end)
+    self.textbox = self.ui.Trading.Select.Amount.Tab
+    self.textbox:GetPropertyChangedSignal('Text'):Connect(function()
+        self.textbox.Text = self.textbox.Text:gsub('%D+', '')
+        self.textbox.Text = self.textbox.Text:sub(1,3)
+        if not self.selectedItem then return end
+        self.ui.Trading.Select.Add.Tab.TextLabel.Text = `+{self.textbox.Text} {self.selectedItem}`
+    end)
+    self.btn(self.ui.Trading.Select.Add, function()
+        if not self.selectedItem then return end
+        if tonumber(self.textbox.Text) and tonumber(self.selectedItem.Tab.Count.Text) < tonumber(self.textbox.Text) then self.txtswap(self.ui.Trading.Select.Add.Tab.TextLabel, 'Not Enough') return end
+        self.txtswap(self.ui.Trading.Select.Add.Tab.TextLabel, 'Added')
+    end)
 end
 
 function Trading:KnitStart()
+    self.selectedItem = nil
+    self.plusCell = nil
     self.tradingInviteFrame = self.ui.Trading.Frame.Frame.Personal.Personal
     self.playerToInvite = self.cd(self.tradingInviteFrame.Item)
     self.ui.Trading.Select.Position = UDim2.fromScale(-0.35, 0.5)
@@ -68,6 +84,8 @@ function Trading:KnitStart()
     self.service.PushInitiateTrade:Connect(function(initiator)
         if Knit.popup('interactive', `{string.gsub(tostring(initiator), "^%l", function(c) return string.upper(c) end)} wants to trade with you.`) then
             self.service:InitiateTrade(initiator)
+        else
+            self.service:CancelTrade()
         end
     end)
     self.service.PushStartTrade:Connect(function()

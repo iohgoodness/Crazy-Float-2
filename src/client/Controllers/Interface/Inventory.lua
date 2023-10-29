@@ -30,7 +30,9 @@ function Inventory:Load(frame, fn)
             viewportCamera.CFrame = CFrame.new(Vector3.new(0, 2, 6), model:GetPivot().Position)
             newItem.Parent = frame
         end
-        self.btn(frame[k], fn(frame[k]))
+        self.btn(frame[k], function()
+            fn(frame[k])
+        end)
     end
 end
 
@@ -38,27 +40,14 @@ function Inventory:KnitStart()
     self.service.Pull:Connect(function(inventory)
         self.inventory = inventory
         self:Load(self.ui.Inventory.Frame.Frame.Personal.Personal, function(item)
-            print(item)
+
+        end)
+        local TradingController = Knit.GetController('Trading')
+        self:Load(self.ui.Trading.Select.Frame.Personal.Personal, function(item)
+            TradingController.selectedItem = item
+            TradingController.ui.Trading.Select.Add.Tab.TextLabel.Text = `+{TradingController.textbox.Text} {TradingController.selectedItem}`
         end)
     end)
-    --[[ for _,frame in pairs(self.ui.Settings.Frame.Frame.Settings.Settings:GetChildren()) do
-        if not frame:IsA('Frame') then continue end
-        if frame:FindFirstChild('Toggle') then
-            self.btn(frame.Toggle, function()
-                frame.Toggle.Tab.TextLabel.Text = frame.Toggle.Tab.TextLabel.Text == 'ON' and 'OFF' or 'ON'
-                self.service:Push(frame.Name, frame.Toggle.Tab.TextLabel.Text == 'ON' and true or false)
-            end)
-        elseif frame:FindFirstChild('Down') and frame:FindFirstChild('Up') then
-            self.btn(frame.Down, function()
-                frame.Number.Text = math.clamp(tonumber(frame.Number.Text) - 1, 0, 10)
-                self.service:Push(frame.Name, tonumber(frame.Number.Text))
-            end, .02, 1.03)
-            self.btn(frame.Up, function()
-                frame.Number.Text = math.clamp(tonumber(frame.Number.Text) + 1, 0, 10)
-                self.service:Push(frame.Name, tonumber(frame.Number.Text))
-            end, .02, 1.03)
-        end
-    end ]]
 end
 
 return Inventory

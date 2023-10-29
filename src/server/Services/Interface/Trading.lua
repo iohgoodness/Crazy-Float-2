@@ -63,6 +63,7 @@ function Trading.Client:InitiateTrade(initiator : Player, receiver : Player)
         for _,player in pairs({initiator, receiver}) do
             Trading.Client.PushStartTrade:Fire(player)
         end
+        return nil
     else
         -- trade being sent
         if Trading.TradeInvites[initiator.Name] then return `Wait {Knit.cfg.Trading.Cooldown - (math.ceil(os.clock()) - receiver:GetAttribute(`{initiator}InviteCooldown`))} Seconds to Invite Again` end
@@ -77,6 +78,7 @@ function Trading.Client:InitiateTrade(initiator : Player, receiver : Player)
         Trading.Client.PushInitiateTrade:Fire(receiver, initiator)
         return 'Invite Sent'
     end
+    return 'Declined'
 end
 
 return Trading
