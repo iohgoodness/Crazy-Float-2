@@ -25,4 +25,9 @@ function Notification:KnitStart()
     end)
 end
 
+--[[
+Knit.popup('okay', 'this is a test 2')
+Knit.popup('interactive', 'this is an interactive test 3', 'ignore 1', 'accept 2')
+]]
+
 return Notification

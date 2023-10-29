@@ -23,7 +23,7 @@ local players = {}
 local readyRemote = Instance.new('RemoteEvent') ; readyRemote.Name = 'Ready' ; readyRemote.Parent = ReplicatedStorage
 readyRemote.OnServerEvent:Connect(function(player) players[player] = true end)
 
-Players.PlayerAdded:Connect(function(player : Player)
+local function PlayerAdded(player)
     Thread.Spawn(function()
         repeat task.wait() until (Knit.Profiles[player] and players[player]) or player:IsDescendantOf(game.Players) == false
         if player:IsDescendantOf(game.Players) == false then return end
@@ -36,9 +36,16 @@ Players.PlayerAdded:Connect(function(player : Player)
             end
         end
     end)
+end
+
+for _,player in pairs(Players:GetChildren()) do
+    PlayerAdded(player)
+end
+Players.PlayerAdded:Connect(function(player)
+    PlayerAdded(player)
 end)
 
-Players.PlayerRemoving:Connect(function(player : Player)
+Players.PlayerRemoving:Connect(function(player)
     Thread.Spawn(function()
         if players[player] then players[player] = nil end
         for _,moduleScript in pairs(game.ServerScriptService.Server.Services:GetDescendants()) do

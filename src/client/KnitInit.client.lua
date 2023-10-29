@@ -38,8 +38,8 @@ Knit.btn = function(btn, fn, timer, scale, ignoreRotate)
     end)
 end
 
-local lastOpenFrame = nil;
-local debounce = false;
+local lastOpenFrame = nil
+local debounce = false
 
 Knit.toggle = function(uiName, frame, disableDimmer)
     if debounce then return end
@@ -47,7 +47,7 @@ Knit.toggle = function(uiName, frame, disableDimmer)
     local player = Players.LocalPlayer
     local playerGui = player:WaitForChild('PlayerGui')
     local foundUI = playerGui:FindFirstChild(uiName)
-    if not frame then frame = foundUI:GetChildren()[1] else frame = foundUI:FindFirstChild(frame) end
+    if not frame then frame = foundUI:FindFirstChild('Frame') else frame = foundUI:FindFirstChild(frame) end
     if not frame:GetAttribute('sx') and not frame:GetAttribute('sy') then frame:SetAttribute('sx', frame.Size.X.Scale) frame:SetAttribute('sy', frame.Size.Y.Scale) end
 
     if lastOpenFrame == frame then
@@ -122,21 +122,23 @@ Knit.popup = function(popupType, mainText, noText, yesText)
     inpopup = true
     Knit.popupAnswer = nil
     if popupType == 'interactive' then
-        ui.Notification.Okay.Frame.TextLabel.Text = mainText or 'No text provided'
-        Knit.toggle('Notification', 'Interactive')
-        toggleData = 'Interactive'
-    elseif popupType == 'okay' then
         ui.Notification.Interactive.Frame.TextLabel.Text = mainText or 'No text provided'
         ui.Notification.Interactive.No.Tab.TextLabel.Text = string.upper(noText or 'IGNORE')
         ui.Notification.Interactive.Yes.Tab.TextLabel.Text = string.upper(yesText or 'ACCEPT')
+        Knit.toggle('Notification', 'Interactive')
+        toggleData = 'Interactive'
+    elseif popupType == 'okay' then
+        ui.Notification.Okay.Frame.TextLabel.Text = mainText or 'No text provided'
         Knit.toggle('Notification', 'Okay')
         toggleData = 'Okay'
     end
     repeat task.wait() until Knit.popupAnswer~=nil
+    local answerCopy = Knit.popupAnswer
     Knit.toggle('Notification', toggleData)
     toggleData = nil
     Knit.popupAnswer = nil
     inpopup = false
+    return answerCopy
 end
 
 --warn 'KNIT START'
@@ -144,5 +146,30 @@ Knit.Start():catch(warn)
 
 local readyRemote = ReplicatedStorage:WaitForChild('Ready')
 readyRemote:FireServer()
+
+local function PlayerAdded(player)
+    Thread.Spawn(function()
+        for _,module in pairs(script.Parent.Controllers:GetDescendants()) do if module:IsA('ModuleScript') then
+            module = require(module)
+            if module.PlayerAdded then
+                Thread.Spawn(module.PlayerAdded, module, player)
+            end
+        end end
+    end)
+end
+for _,player in pairs(Players:GetChildren()) do
+    PlayerAdded(player)
+end
+Players.PlayerAdded:Connect(function(player)
+    PlayerAdded(player)
+end)
+Players.PlayerRemoving:Connect(function(player)
+    for _,module in pairs(script.Parent.Controllers:GetDescendants()) do if module:IsA('ModuleScript') then
+        module = require(module)
+        if module.PlayerRemoving then
+            Thread.Spawn(module.PlayerRemoving, module, player)
+        end
+    end end
+end)
 
 warn '★ FRAMEWORK LOADED ★'

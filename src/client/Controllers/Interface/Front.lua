@@ -27,4 +27,24 @@ function Front:KnitStart()
     end
 end
 
+function Front:Hide()
+    self.tween(self.ui.Front.Frame.Money, {Position = UDim2.fromScale(0.189-1.5, 0.048)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    task.delay(.1, function()
+        self.tween(self.ui.Front.Frame.CrazyGems, {Position = UDim2.fromScale(0.189-1.5, 0.2)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    end)
+    task.delay(.1, function()
+        self.tween(self.ui.Front.Frame.Buttons, {Position = UDim2.fromScale(0.109-1.5, 0.322)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    end)
+end
+
+function Front:Show()
+    self.tween(self.ui.Front.Frame.Money, {Position = UDim2.fromScale(0.189, 0.048)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    task.delay(.1, function()
+        self.tween(self.ui.Front.Frame.CrazyGems, {Position = UDim2.fromScale(0.189, 0.2)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    end)
+    task.delay(.1, function()
+        self.tween(self.ui.Front.Frame.Buttons, {Position = UDim2.fromScale(0.109, 0.322)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    end)
+end
+
 return Front
