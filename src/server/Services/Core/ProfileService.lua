@@ -44,7 +44,7 @@ function ProfileService:KnitStart()
         Settings = {
             Abbreviate = true;
             ['Head Turn'] = true;
-            ['Dark Mode'] = true;
+            ['Dark Mode'] = false;
             Music = 5;
             SFX = 5;
             FOV = 5;

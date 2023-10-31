@@ -32,7 +32,9 @@ Settings.fns['Dark Mode'] = function(name)
                     if uiObject:IsA('ImageLabel') and uiObject.Image == 'rbxassetid://15162041721' then
                         uiObject.ImageColor3 = Knit.cfg.Settings.DarkMode
                     end
-                    uiObject.BackgroundColor3 = Knit.cfg.Settings.DarkMode
+                    if uiObject.BackgroundColor3 == Knit.cfg.Settings.LightMode then
+                        uiObject.BackgroundColor3 = Knit.cfg.Settings.DarkMode
+                    end
                 end)
             end
         end
@@ -44,7 +46,9 @@ Settings.fns['Dark Mode'] = function(name)
                     if uiObject:IsA('ImageLabel') and uiObject.Image == 'rbxassetid://15162041721' then
                         uiObject.ImageColor3 = Knit.cfg.Settings.LightMode
                     end
-                    uiObject.BackgroundColor3 = Knit.cfg.Settings.LightMode
+                    if uiObject.BackgroundColor3 == Knit.cfg.Settings.DarkMode then
+                        uiObject.BackgroundColor3 = Knit.cfg.Settings.LightMode
+                    end
                 end)
             end
         end

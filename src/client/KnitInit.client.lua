@@ -20,12 +20,15 @@ warn '★ UI LOADED ★'
 local btnDebounce = false
 Knit.btn = function(btn, fn, timer, scale, ignoreRotate)
     if not btn:GetAttribute('sx') and not btn:GetAttribute('sy') then btn:SetAttribute('sx', btn.Size.X.Scale) btn:SetAttribute('sy', btn.Size.Y.Scale) end
+    if not btn.Tab:GetAttribute('sx') and not btn.Tab:GetAttribute('sy') then btn.Tab:SetAttribute('sx', btn.Tab.Size.X.Scale) btn.Tab:SetAttribute('sy', btn.Tab.Size.Y.Scale) end
     local MouseEnter, MouseLeave = Knit.Shared.Hover.MouseEnterLeaveEvent(btn)
     MouseEnter:Connect(function()
-        TweenService:Create(btn.Tab, TweenInfo.new(0.21, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {Rotation = 3}):Play()
+        --TweenService:Create(btn.Tab, TweenInfo.new(0.21, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {Rotation = 3}):Play()
+        TweenService:Create(btn.Tab, TweenInfo.new(timer or 0.09, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Size = UDim2.fromScale(btn.Tab:GetAttribute('sx')*.91, btn.Tab:GetAttribute('sy')*.91)}):Play()
     end)
     MouseLeave:Connect(function()
-        TweenService:Create(btn.Tab, TweenInfo.new(0.21, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {Rotation = 0}):Play()
+        --TweenService:Create(btn.Tab, TweenInfo.new(0.21, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {Rotation = 0}):Play()
+        TweenService:Create(btn.Tab, TweenInfo.new(timer or 0.09, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Size = UDim2.fromScale(btn.Tab:GetAttribute('sx'), btn.Tab:GetAttribute('sy'))}):Play()
     end)
     btn.MouseButton1Click:Connect(function()
         if btnDebounce then return end
@@ -40,10 +43,10 @@ end
 
 local lastOpenFrame = nil
 local debounce = false
-
 Knit.toggle = function(uiName, frame, disableDimmer)
     if debounce then return end
     debounce = true
+    local inUI = false
     local player = Players.LocalPlayer
     local playerGui = player:WaitForChild('PlayerGui')
     local foundUI = playerGui:FindFirstChild(uiName)
@@ -52,23 +55,29 @@ Knit.toggle = function(uiName, frame, disableDimmer)
 
     if lastOpenFrame == frame then
         lastOpenFrame = nil
-        TweenService:Create(frame, TweenInfo.new(0.21, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
+        TweenService:Create(frame, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
+        task.wait(.081)
         frame.Visible = false
         TweenService:Create(game.Lighting.Blur, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 0}):Play()
         TweenService:Create(game.Lighting.ColorCorrection, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TintColor = Color3.fromRGB(255,255,255)}):Play()
         Knit.GetController('Settings').fns['FOV']('FOV')
         --TweenService:Create(workspace.CurrentCamera, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FieldOfView = Knit.GetController('Settings').save['FOV']}):Play()
+        task.wait(.121)
         debounce = false
         return
     elseif lastOpenFrame then
-        TweenService:Create(lastOpenFrame, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
-        frame.Visible = false
+        TweenService:Create(lastOpenFrame, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
+        task.wait(.081)
+        lastOpenFrame.Visible = false
+        inUI = true
     end
 
     if not disableDimmer then
         TweenService:Create(game.Lighting.Blur, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 8}):Play()
         TweenService:Create(game.Lighting.ColorCorrection, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TintColor = Color3.fromRGB(143, 143, 143)}):Play()
-        TweenService:Create(workspace.CurrentCamera, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FieldOfView = workspace.CurrentCamera.FieldOfView+10}):Play()
+        if not inUI then
+            TweenService:Create(workspace.CurrentCamera, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FieldOfView = workspace.CurrentCamera.FieldOfView+10}):Play()
+        end
     end
     frame.Size = UDim2.fromScale(0,0)
     frame.Visible = true
