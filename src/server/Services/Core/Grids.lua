@@ -16,7 +16,8 @@ function Grids:KnitInit()
     self.gridsDir = workspace.Island.Grids
     self.backupGrids = {}
     self.gridsInUse = {}
-    for _,v in pairs(self.gridsDir:GetChildren()) do
+    for i,v in pairs(self.gridsDir:GetChildren()) do
+        v.Name = i
         table.insert(self.backupGrids, v:Clone())
         v:Destroy()
     end
@@ -46,11 +47,12 @@ end
 
 function Grids:PlayerAdded(player)
     local pickedGrid
-    for _,grid in pairs(self.backupGrids) do
+    for _,grid in ipairs(self.backupGrids) do
         if not table.find(self.gridsInUse, grid.Name) then
             table.insert(self.gridsInUse, grid.Name)
             pickedGrid = grid
             player:SetAttribute('Grid', pickedGrid.Name)
+            break
         end
     end
     local newGrid = pickedGrid:Clone()

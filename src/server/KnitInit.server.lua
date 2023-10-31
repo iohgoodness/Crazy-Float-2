@@ -24,7 +24,7 @@ local readyRemote = Instance.new('RemoteEvent') ; readyRemote.Name = 'Ready' ; r
 readyRemote.OnServerEvent:Connect(function(player) players[player] = true end)
 
 local function PlayerAdded(player)
-    Thread.Spawn(function()
+    --Thread.Spawn(function()
         repeat task.wait() until (Knit.Profiles[player] and players[player]) or player:IsDescendantOf(game.Players) == false
         if player:IsDescendantOf(game.Players) == false then return end
         for _,moduleScript in pairs(game.ServerScriptService.Server.Services:GetDescendants()) do
@@ -35,7 +35,7 @@ local function PlayerAdded(player)
                 Thread.Spawn(module.PlayerAdded, module, player)
             end
         end
-    end)
+   -- end)
 end
 
 for _,player in pairs(Players:GetChildren()) do
@@ -44,6 +44,8 @@ end
 Players.PlayerAdded:Connect(function(player)
     PlayerAdded(player)
 end)
+
+Knit.GroupID = 9291891
 
 Players.PlayerRemoving:Connect(function(player)
     Thread.Spawn(function()

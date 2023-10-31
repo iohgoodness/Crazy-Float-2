@@ -35,15 +35,23 @@ end
 
 function ProfileService:KnitStart()
     local ProfileTemplate = {
-        Leaderboards = { };
+        Leaderboards = {
+            Level = 0;
+            Money = 1300;
+            Gems = 0;
+        };
+        RedeemedCodes = {};
         Settings = {
-            Abbreviate = false;
+            Abbreviate = true;
+            ['Head Turn'] = true;
+            ['Dark Mode'] = true;
             Music = 5;
             SFX = 5;
+            FOV = 5;
         };
         Inventory = {
             Blocks = {
-                ['Wood Square'] = 4;
+                ['Wood Square'] = 5;
                 ['Steel Triangle'] = 1;
             };
             Plots = {

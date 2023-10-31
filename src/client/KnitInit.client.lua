@@ -14,7 +14,7 @@ local modules = {}; for _,module in pairs(ReplicatedStorage.Shared:GetDescendant
 modules = {}; for _,module in pairs(ReplicatedStorage.Configurations:GetDescendants()) do if module:IsA('ModuleScript') then modules[tostring(module)]=require(module) end end; Knit.Cfg = modules; Knit.cfg = modules; Knit.CFG = modules;
 
 game:GetService('ContentProvider'):PreloadAsync(ReplicatedFirst:WaitForChild('GUI'):GetChildren())
-for _,ui in pairs(ReplicatedFirst:WaitForChild('GUI'):GetChildren()) do ui.Parent = Players.LocalPlayer.PlayerGui end
+for _,ui in pairs(ReplicatedFirst:WaitForChild('GUI'):GetChildren()) do ui:SetAttribute('Invert', true); ui.Parent = Players.LocalPlayer.PlayerGui end
 warn '★ UI LOADED ★'
 
 local btnDebounce = false
@@ -52,11 +52,12 @@ Knit.toggle = function(uiName, frame, disableDimmer)
 
     if lastOpenFrame == frame then
         lastOpenFrame = nil
-        TweenService:Create(frame, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
+        TweenService:Create(frame, TweenInfo.new(0.21, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
         frame.Visible = false
         TweenService:Create(game.Lighting.Blur, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 0}):Play()
         TweenService:Create(game.Lighting.ColorCorrection, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TintColor = Color3.fromRGB(255,255,255)}):Play()
-        TweenService:Create(workspace.CurrentCamera, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FieldOfView = 70}):Play()
+        Knit.GetController('Settings').fns['FOV']('FOV')
+        --TweenService:Create(workspace.CurrentCamera, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FieldOfView = Knit.GetController('Settings').save['FOV']}):Play()
         debounce = false
         return
     elseif lastOpenFrame then
@@ -67,7 +68,7 @@ Knit.toggle = function(uiName, frame, disableDimmer)
     if not disableDimmer then
         TweenService:Create(game.Lighting.Blur, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 8}):Play()
         TweenService:Create(game.Lighting.ColorCorrection, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TintColor = Color3.fromRGB(143, 143, 143)}):Play()
-        TweenService:Create(workspace.CurrentCamera, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FieldOfView = 80}):Play()
+        TweenService:Create(workspace.CurrentCamera, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {FieldOfView = workspace.CurrentCamera.FieldOfView+10}):Play()
     end
     frame.Size = UDim2.fromScale(0,0)
     frame.Visible = true
