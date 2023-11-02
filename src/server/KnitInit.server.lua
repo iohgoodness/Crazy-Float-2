@@ -9,6 +9,8 @@ local Players = game:GetService("Players")
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local Thread = require(ReplicatedStorage.Packages.Thread)
 
+Knit.GroupID = 9291891
+
 workspace.Studio:Destroy()
 
 local modules = {}; for _,module in pairs(ReplicatedStorage.Shared:GetDescendants()) do if module:IsA('ModuleScript') then modules[tostring(module)]=require(module) end end; Knit.shared = modules;
@@ -24,18 +26,16 @@ local readyRemote = Instance.new('RemoteEvent') ; readyRemote.Name = 'Ready' ; r
 readyRemote.OnServerEvent:Connect(function(player) players[player] = true end)
 
 local function PlayerAdded(player)
-    --Thread.Spawn(function()
-        repeat task.wait() until (Knit.Profiles[player] and players[player]) or player:IsDescendantOf(game.Players) == false
-        if player:IsDescendantOf(game.Players) == false then return end
-        for _,moduleScript in pairs(game.ServerScriptService.Server.Services:GetDescendants()) do
-            if not moduleScript:IsA('ModuleScript') then continue end
-            if moduleScript.Name == 'ProfileService' then continue end
-            local module = require(moduleScript)
-            if module.PlayerAdded then
-                Thread.Spawn(module.PlayerAdded, module, player)
-            end
+    repeat task.wait() until (Knit.Profiles[player] and players[player]) or player:IsDescendantOf(game.Players) == false
+    if player:IsDescendantOf(game.Players) == false then return end
+    for _,moduleScript in pairs(game.ServerScriptService.Server.Services:GetDescendants()) do
+        if not moduleScript:IsA('ModuleScript') then continue end
+        if moduleScript.Name == 'ProfileService' then continue end
+        local module = require(moduleScript)
+        if module.PlayerAdded then
+            Thread.Spawn(module.PlayerAdded, module, player)
         end
-   -- end)
+    end
 end
 
 for _,player in pairs(Players:GetChildren()) do
@@ -44,8 +44,6 @@ end
 Players.PlayerAdded:Connect(function(player)
     PlayerAdded(player)
 end)
-
-Knit.GroupID = 9291891
 
 Players.PlayerRemoving:Connect(function(player)
     Thread.Spawn(function()

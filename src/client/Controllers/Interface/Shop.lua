@@ -13,6 +13,21 @@ local cfg = Knit.cfg.PremiumShop
 
 local SecondsToDHMS = Knit.shared.Math.SecondsToDHMS
 
+function Shop:ChangePage(pageName)
+    local button = self.ui.PremiumShop.Frame.Top[pageName]
+    for _,btn in pairs(self.ui.PremiumShop.Frame.Top:GetChildren()) do
+        if not btn:IsA("ImageButton") then continue end
+        btn.UIStroke.Thickness = 0
+    end
+    button.UIStroke.Thickness = 4
+    for _,frame in pairs(self.ui.PremiumShop.Frame:GetChildren()) do
+        if not frame:IsA("Frame") then continue end
+        if frame.Name == 'Top' or frame.Name == 'Frame' then continue end
+        frame.Visible = false
+    end
+    self.ui.PremiumShop.Frame[button.Name].Visible = true
+end
+
 function Shop:KnitStart()
     local Animation = Knit.GetController('Animation')
     self.service.PushPurchased:Connect(function(itemType, scale)
@@ -29,6 +44,17 @@ function Shop:KnitStart()
                 item.LayoutOrder = tonumber(data.Gems)
                 item.Desc.Text = data.Desc
                 item.Tab.Tab.TextLabel.Text = data.Gems
+                self.btn(item, function()
+                    Knit.pd('Leaderboards.Gems'):andThen(function(response)
+                        if response < tonumber(data.Gems) then
+                            self:ChangePage('Gems')
+                        else
+                            if Knit.popup('interactive', `Are you sure you want to buy {data.Title} for {data.Gems} gems?`, 'NO', 'YES') then
+                                print 'updated'
+                            end
+                        end
+                    end)
+                end)
             end
         end
     end)
@@ -55,17 +81,7 @@ function Shop:KnitStart()
     for _,button in pairs(self.ui.PremiumShop.Frame.Top:GetChildren()) do
         if not button:IsA("ImageButton") then continue end
         self.btn(button, function()
-            for _,btn in pairs(self.ui.PremiumShop.Frame.Top:GetChildren()) do
-                if not btn:IsA("ImageButton") then continue end
-                btn.UIStroke.Thickness = 0
-            end
-            button.UIStroke.Thickness = 4
-            for _,frame in pairs(self.ui.PremiumShop.Frame:GetChildren()) do
-                if not frame:IsA("Frame") then continue end
-                if frame.Name == 'Top' or frame.Name == 'Frame' then continue end
-                frame.Visible = false
-            end
-            self.ui.PremiumShop.Frame[button.Name].Visible = true
+            self:ChangePage(button.Name)
         end)
     end
 end
