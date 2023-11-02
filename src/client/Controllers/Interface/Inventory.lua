@@ -47,6 +47,10 @@ function Inventory:KnitStart()
             TradingController.selectedItem = item
             TradingController.ui.Trading.Select.Add.Tab.TextLabel.Text = `+{TradingController.textbox.Text} {TradingController.selectedItem}`
         end)
+        local BuildingController = Knit.GetController('Building')
+        self:Load(self.ui.Building.Frame.Frame.Personal.Personal, function(item)
+            BuildingController:Placing(item.Name)
+        end)
     end)
 end
 

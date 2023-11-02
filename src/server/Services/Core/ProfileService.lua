@@ -37,7 +37,7 @@ function ProfileService:KnitStart()
     local ProfileTemplate = {
         Leaderboards = {
             Level = 0;
-            Money = 1300;
+            Money = 0;
             Gems = 0;
         };
         RedeemedCodes = {};
@@ -56,8 +56,8 @@ function ProfileService:KnitStart()
             };
             Plots = {
                 Plot = {
-                    Active = 'Basic';
-                    Owned = {'Basic'};
+                    Active = 'Vaporwave Plot';
+                    Owned = {'Basic', 'Vaporwave Plot'};
                 };
                 Label = {
                     Active = 'Glowing';
@@ -65,6 +65,7 @@ function ProfileService:KnitStart()
                 };
             };
         };
+        Plots = {{};{};{};{};{};};
     }
     local ProfileServiceModule = require(game.ServerScriptService.ProfileService)
     local Players = game:GetService("Players")
