@@ -46,7 +46,7 @@ function Grids:SwapPlot(player, plotName)
     if not foundGrid then return end
     local plot = foundGrid.Plot
     local newPlot = ReplicatedStorage.Assets.Physical.Plots[plotName]:Clone()
-    newPlot:PivotTo(plot:GetPivot())
+    newPlot:PivotTo( (CFrame.new(plot:GetPivot().Position, workspace.Island.Ground.Center.Position))*CFrame.Angles(0, math.rad(180), 0) )
     newPlot.Parent = foundGrid
     plot:Destroy()
     self:SwapLabel(player, Knit.pd(player).Inventory.Plots.Label.Active)
@@ -67,7 +67,7 @@ function Grids:PlayerAdded(player)
     newGrid.Parent = workspace.Island.Grids
     self:SwapPlot(player, Knit.pd(player).Inventory.Plots.Plot.Active)
     local character = player.Character or player.CharacterAdded:Wait()
-    character:PivotTo(newGrid.Part.CFrame)
+    character:PivotTo(newGrid:FindFirstChildOfClass('Model').Base.CFrame * CFrame.new(0, 20, 0))
     character.Parent = workspace.Characters
     player.CharacterAdded:Connect(function(character)
         character.Parent = workspace.Characters

@@ -21,16 +21,21 @@ function Building:KnitStart()
     self.ghostY = 0
     self.ghostZ = 0
     self.selectedBoat = 1
-    self.inc = 30
+    self.inc = 2
+    self.doubletapcd = .200
     self.cycle(self.ui.Building.Frame.Plot.Personal.Personal, function(button)
         self.btn(button, function()
             self.cycle(self.ui.Building.Frame.Plot.Personal.Personal, function(btn)
-                self.tween(btn.Tab.UIStroke, {Color = Color3.new(255, 255, 255)})
+                self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
             end)
-            button.Tab.UIStroke.Color = Color3.fromRGB(0, 0, 0)
+            task.wait(.1)
+            task.wait(.12)
+            self.tween(button, {BackgroundColor3 = Color3.fromRGB(3, 124, 57)}, .1)
             self.service:ChangeBoat(tonumber(button.Name))
         end)
     end)
+    local x,y,z,q,e = false,false,false,false,false
+    local xt,yt,zt,qt,et = 0,0,0,0,0
     UserInputService.InputBegan:Connect(function(input, gp)
         if gp then return end
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -39,13 +44,80 @@ function Building:KnitStart()
             end
         elseif input.UserInputType == Enum.UserInputType.Keyboard then
             if input.KeyCode == Enum.KeyCode.Z then
-                self.ghostX = (self.ghostX==360-self.inc) and 0 or self.ghostX + self.inc
+                x = true
             elseif input.KeyCode == Enum.KeyCode.X then
-                self.ghostY = (self.ghostY==360-self.inc) and 0 or self.ghostY + self.inc
+                y = true
+            elseif input.KeyCode == Enum.KeyCode.Q then
+                q = true
+            elseif input.KeyCode == Enum.KeyCode.E then
+                e = true
             elseif input.KeyCode == Enum.KeyCode.C then
-                self.ghostZ = (self.ghostZ==360-self.inc) and 0 or self.ghostZ + self.inc
+                z = true
             end
         end
+    end)
+    UserInputService.InputEnded:Connect(function(input, gp)
+        if gp then return end
+        if input.UserInputType == Enum.UserInputType.Keyboard then
+            if input.KeyCode == Enum.KeyCode.Z then
+                x = false
+                xt += 1
+            elseif input.KeyCode == Enum.KeyCode.X then
+                y = false
+                yt += 1
+            elseif input.KeyCode == Enum.KeyCode.Q then
+                q = false
+                qt += 1
+            elseif input.KeyCode == Enum.KeyCode.E then
+                e = false
+                et += 1
+            elseif input.KeyCode == Enum.KeyCode.C then
+                z = false
+                zt += 1
+            end
+        end
+    end)
+    local counter = 0
+    RunService.RenderStepped:Connect(function(dt)
+        counter += dt
+        if counter > self.doubletapcd then
+            if xt >= 2 then
+                self.ghostX = 0
+            end
+            if yt >= 2 then
+                self.ghostY = 0
+            end
+            if zt >= 2 then
+                self.ghostZ = 0
+            end
+            if qt >= 2 then
+                self.ghostY = 0
+            end
+            if et >= 2 then
+                self.ghostY = 0
+            end
+            xt,yt,zt,qt,et = 0,0,0,0,0
+            counter = 0
+        end
+        if x then
+            self.ghostX = (self.ghostX==360-self.inc) and 0 or self.ghostX + self.inc
+        end
+        if y then
+            self.ghostY = (self.ghostY==360-self.inc) and 0 or self.ghostY + self.inc
+        end
+        if z then
+            self.ghostZ = (self.ghostZ==360-self.inc) and 0 or self.ghostZ + self.inc
+        end
+        if q then
+            print 'q'
+            self.ghostY = (self.ghostY==360-self.inc) and 0 or self.ghostY - self.inc
+        end
+        if e then
+            print 'e'
+            self.ghostY = (self.ghostY==360-self.inc) and 0 or self.ghostY + self.inc
+        end
+        --print(self.inc)
+        --print(self.ghostY)
     end)
     self.raycastParams = RaycastParams.new()
     self.raycastParams.FilterDescendantsInstances = {workspace.Island.Ghost, workspace.Characters}
@@ -55,7 +127,12 @@ end
 
 function Building:Place()
     if not self.ghostObject then return end
-    self.service:AddObject({#workspace.Island.Grids[Players.LocalPlayer.Name].Objects:GetChildren(), self.ghostObject.Name, self.ghostObject:GetPivot()}):andThen(function()
+    local data = {
+        #workspace.Island.Grids[Players.LocalPlayer.Name].Objects:GetChildren();
+        self.ghostObject.Name;
+        CFrame.new(self.ghostObjectSpringPosition.Target) * CFrame.Angles(math.rad(self.ghostObjectSpringRotation.Position.X), math.rad(self.ghostObjectSpringRotation.Position.Y), math.rad(self.ghostObjectSpringRotation.Position.Z));
+    }
+    self.service:AddObject(data):andThen(function()
         self:StopPlacing()
     end)
 end

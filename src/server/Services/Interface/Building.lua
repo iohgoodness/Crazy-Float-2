@@ -8,9 +8,7 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 
 local Building = Knit.CreateService {
     Name = "Building",
-    Client = {
-        PushUpdatePlot = Knit.CreateSignal();
-    },
+    Client = { },
 }
 
 function Building:KnitStart()
@@ -64,9 +62,10 @@ function Building:PlayerAdded(player)
     self:LoadIndex(player, Knit.pd(player).Plots.Index)
 end
 
-function Building:ChangeBoat(player, index)
+function Building.Client:ChangeBoat(player, index)
     if not tonumber(index) then return end
-    self.Client.PushUpdatePlot:Fire(player, Knit.pd(player).Plots.Index)
+    Knit.pd(player).Plots.Index = index
+    Building:LoadIndex(player, index)
 end
 
 return Building

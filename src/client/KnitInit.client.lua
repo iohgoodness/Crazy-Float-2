@@ -34,7 +34,7 @@ Knit.btn = function(btn, fn, timer, scale, ignoreRotate)
         if btnDebounce then return end
         btnDebounce = true
         if not btn then return end
-        TweenService:Create(btn.Tab, TweenInfo.new(timer or 0.09, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, true), {Size = UDim2.fromScale(1, scale or 1.1)}):Play()
+        TweenService:Create(btn.Tab, TweenInfo.new(timer or 0.09, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, true), {Size = UDim2.fromScale(scale or .81, scale or .81)}):Play()
         Thread.Spawn(function() fn() end)
         task.wait(timer and timer+.1 or 0.09+.1)
         btnDebounce = false

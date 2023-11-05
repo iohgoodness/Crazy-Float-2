@@ -20,7 +20,8 @@ function Inventory:Load(frame, fn)
             newItem.Name = k
             newItem.Tab.ItemName.Text = k
             newItem.Tab.Count.Text = v
-            newItem.Tab.UIStroke.Color = Knit.cfg.Blocks.Rarity[Knit.cfg.Blocks.Blocks[k].Rarity]
+            --newItem.Tab.UIStroke.Color = Knit.cfg.Blocks.Rarity[Knit.cfg.Blocks.Blocks[k].Rarity]
+            newItem.Tab.BackgroundColor3 = Knit.cfg.Blocks.Rarity[Knit.cfg.Blocks.Blocks[k].Rarity]
             local vf = newItem.Tab.ViewportFrame
             local model = ReplicatedStorage.Assets.Physical.Building.Blocks[k]:Clone()
             model.Parent = vf
