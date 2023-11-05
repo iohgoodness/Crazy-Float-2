@@ -112,6 +112,13 @@ Knit.cd = function(obj)
     return temp
 end
 
+Knit.cycle = function(frame, fn)
+    for _,v in pairs(frame:GetChildren()) do
+        if not v:IsA('ImageButton') then continue end
+        fn(v)
+    end
+end
+
 Knit.AddControllersDeep(script.Parent.Controllers)
 for _,module in pairs(script.Parent.Controllers:GetDescendants()) do if module:IsA('ModuleScript') then
     module = require(module)
@@ -122,6 +129,7 @@ for _,module in pairs(script.Parent.Controllers:GetDescendants()) do if module:I
     module.txtswap = Knit.txtswap
     module.tween = Knit.tween
     module.cd = Knit.cd
+    module.cycle = Knit.cycle
 end end
 
 local ui = Players.LocalPlayer.PlayerGui

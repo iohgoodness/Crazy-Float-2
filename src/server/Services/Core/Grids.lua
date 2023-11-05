@@ -12,12 +12,19 @@ local Grids = Knit.CreateService {
     Client = {},
 }
 
+function Grids:GetGrid(player)
+    return workspace.Island.Grids:WaitForChild(player.Name)
+end
+
 function Grids:KnitInit()
     self.gridsDir = workspace.Island.Grids
     self.backupGrids = {}
     self.gridsInUse = {}
     for i,v in pairs(self.gridsDir:GetChildren()) do
         v.Name = i
+        local objects = Instance.new('Folder')
+        objects.Name = 'Objects'
+        objects.Parent = v
         table.insert(self.backupGrids, v:Clone())
         v:Destroy()
     end
@@ -61,6 +68,10 @@ function Grids:PlayerAdded(player)
     self:SwapPlot(player, Knit.pd(player).Inventory.Plots.Plot.Active)
     local character = player.Character or player.CharacterAdded:Wait()
     character:PivotTo(newGrid.Part.CFrame)
+    character.Parent = workspace.Characters
+    player.CharacterAdded:Connect(function(character)
+        character.Parent = workspace.Characters
+    end)
 end
 
 function Grids:PlayerRemoving(player)

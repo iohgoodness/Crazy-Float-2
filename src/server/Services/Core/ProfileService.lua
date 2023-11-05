@@ -15,7 +15,7 @@ local ProfileService = Knit.CreateService {
 
 USING_RANDOM_KEY = true
 
-local KEY = 'PLAYER_DATA_TESTING_0001.1.0005'
+local KEY = 'PLAYER_DATA_TESTING_0001.1.0009'
 
 if USING_RANDOM_KEY then
     warn '★ USING RANDOM KEY ★'
@@ -56,8 +56,8 @@ function ProfileService:KnitStart()
             };
             Plots = {
                 Plot = {
-                    Active = 'Vaporwave Plot';
-                    Owned = {'Basic', 'Vaporwave Plot'};
+                    Active = 'Vaporwave';
+                    Owned = {'Basic', 'Vaporwave'};
                 };
                 Label = {
                     Active = 'Glowing';
@@ -65,7 +65,10 @@ function ProfileService:KnitStart()
                 };
             };
         };
-        Plots = {{};{};{};{};{};};
+        Plots = {
+            Index = 1;
+            BoatData = {{};{};{};{};{};};
+        };
     }
     local ProfileServiceModule = require(game.ServerScriptService.ProfileService)
     local Players = game:GetService("Players")
