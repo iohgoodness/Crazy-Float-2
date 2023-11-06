@@ -12,10 +12,6 @@ local Inventory = Knit.CreateService {
     },
 }
 
-function Inventory:KnitStart()
-
-end
-
 function Inventory:PlayerAdded(player)
     self.Client.Pull:Fire(player, Knit.pd(player).Inventory.Blocks)
 end

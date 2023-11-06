@@ -34,6 +34,7 @@ function ProfileService.Client:GetKeyData(player, key)
 end
 
 function ProfileService:KnitStart()
+    print(Knit.cfg.Blocks.GetMax())
     local ProfileTemplate = {
         Leaderboards = {
             Level = 0;
@@ -50,10 +51,8 @@ function ProfileService:KnitStart()
             FOV = 5;
         };
         Inventory = {
-            Blocks = {
-                ['Wood Square'] = 5;
-                ['Steel Triangle'] = 1;
-            };
+            --[[ Blocks = Knit.cfg.Blocks.GetMax(); ]]
+            Blocks = {['Wood Square'] = 5;};
             Plots = {
                 Plot = {
                     Active = 'Vaporwave';

@@ -41,7 +41,11 @@ function Front:KnitStart()
         if not button:IsA('ImageButton') then continue end
         self.btn(button, function()
             if self.ui:FindFirstChild(button.Name) then
-                Knit.toggle(button.Name)
+                if table.find({'Building'}, 'Building') then
+                    Knit.toggle(button.Name, nil, true)
+                else
+                    Knit.toggle(button.Name)
+                end
             end
         end)
     end
