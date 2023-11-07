@@ -26,6 +26,7 @@ function Inventory:Load(frame, fn)
             newItem.Tab.ItemName.Text = k
             newItem.Tab.Count.Text = v
             newItem.Tab.BackgroundColor3 = Knit.cfg.Blocks.Rarity[Knit.cfg.Blocks.Blocks[k].Rarity]
+            newItem.LayoutOrder = Knit.cfg.Blocks.Blocks[k].LayoutOrder
             local model = ReplicatedStorage.Assets.Physical.Building.Blocks[k]:Clone()
             model.PrimaryPart.Transparency = 1
             local camera = Instance.new("Camera")

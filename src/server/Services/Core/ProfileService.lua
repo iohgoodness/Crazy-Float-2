@@ -34,14 +34,13 @@ function ProfileService.Client:GetKeyData(player, key)
 end
 
 function ProfileService:KnitStart()
-    print(Knit.cfg.Blocks.GetMax())
     local ProfileTemplate = {
         Leaderboards = {
             Level = 0;
             Money = 0;
             Gems = 0;
         };
-        XP = 180;
+        XP = 0;
         RedeemedCodes = {};
         Settings = {
             Abbreviate = true;

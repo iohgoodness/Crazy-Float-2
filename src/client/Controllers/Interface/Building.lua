@@ -107,6 +107,16 @@ function Building:KnitStart()
     self.btn(self.ui.Building.Frame.Placing.Personal.Y, function()
         self.ghostY = (self.ghostY==360-self.inc) and 0 or self.ghostY + 360/10 --[[ self.inc ]]
     end)
+    self.btn(self.ui.Building.Frame.Placing.Personal.Clear, function()
+        if Knit.popup('interactive', `Are you sure you want to clear this plot?`, 'NO', 'YES') then
+            self.service:Clear():andThen(function(newInventoryData)
+                Knit.GetController('Inventory').inventory = newInventoryData
+                Knit.GetController('Inventory'):Load(self.ui.Building.Frame.Frame.Personal.Personal, function(item)
+                    Knit.GetController('Building'):Placing(item.Name)
+                end)
+            end)
+        end
+    end)
 end
 
 function Building:Delete()
@@ -121,16 +131,16 @@ function Building:Place()
         CFrame.new(self.ghostObjectSpringPosition.Target) * CFrame.Angles(math.rad(self.ghostObjectSpringRotation.Position.X), math.rad(self.ghostObjectSpringRotation.Position.Y), math.rad(self.ghostObjectSpringRotation.Position.Z));
     }
     self.service:AddObject(data):andThen(function(newInventoryData)
-        self:StopPlacing()
+        self:StopPlacing(true)
         Knit.GetController('Inventory').inventory = newInventoryData
         Knit.GetController('Inventory'):Load(self.ui.Building.Frame.Frame.Personal.Personal, function(item)
             Knit.GetController('Building'):Placing(item.Name)
-        end)
+        end,true)
         self:Placing()
     end)
 end
 
-function Building:StopPlacing()
+function Building:StopPlacing(ignoreColorReset)
     if self.placingconn then
         self.placingconn:Disconnect()
         self.placingconn = nil
@@ -145,9 +155,11 @@ function Building:StopPlacing()
     if self.ghostObjectSpringRotation then
         self.ghostObjectSpringRotation = nil
     end
-    self.cycle(self.ui.Building.Frame.Frame.Personal.Personal, function(btn)
-        self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
-    end)
+    if not ignoreColorReset then
+        self.cycle(self.ui.Building.Frame.Frame.Personal.Personal, function(btn)
+            self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
+        end)
+    end
 end
 
 function Building:StopDeleting()
@@ -171,8 +183,10 @@ function Building:GetMouseHit()
 end
 
 function Building:Placing(itemName)
+    if self.deletingconn then self:StopDeleting() end
     if not itemName then itemName = self.lastItem end
     if Knit.GetController('Inventory').inventory[itemName] == 0 then return self:StopPlacing() end
+    if self.ghostObject then self.ghostObject:Destroy() end
     self.ghostObject = ReplicatedStorage.Assets.Physical.Building.Blocks[itemName]:Clone()
     self.ghostObject.PrimaryPart.Transparency = 1
     self.ghostObject:PivotTo(Players.LocalPlayer.Character:GetPivot())
@@ -193,7 +207,12 @@ function Building:Placing(itemName)
         if mouse.Target and hit and self.placingconn then
             self.ghostObjectSpringPosition.Target = hit.Position
             self.ghostObjectSpringRotation.Target = Vector3.new(self.ghostX, self.ghostY, self.ghostZ)
-            self.ghostCFrame = CFrame.new(self.ghostObjectSpringPosition.Position) * CFrame.Angles(math.rad(self.ghostObjectSpringRotation.Position.X), math.rad(self.ghostObjectSpringRotation.Position.Y), math.rad(self.ghostObjectSpringRotation.Position.Z))
+            local pos = self.ghostObjectSpringRotation.Position
+            self.ghostCFrame = CFrame.new(self.ghostObjectSpringPosition.Position) * CFrame.Angles(
+                math.rad(pos.X),
+                math.rad(pos.Y),
+                math.rad(pos.Z)
+            )
             self.ghostObject:PivotTo(self.ghostCFrame)
         end
     end)

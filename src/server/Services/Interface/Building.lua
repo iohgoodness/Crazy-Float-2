@@ -56,6 +56,22 @@ function Building:RemoveObject(player, instanceID)
     end
 end
 
+function Building:Clear(player)
+    local grid = Building.GridsService:GetGrid(player)
+    if not grid then return end
+    for _,instance in pairs(grid.Objects:GetChildren()) do
+        local objectName = instance:GetAttribute('ObjectName')
+        Knit.pd(player).Inventory.Blocks[objectName] += 1
+        instance:Destroy()
+    end
+    Knit.pd(player).Plots.BoatData[Knit.pd(player).Plots.Index] = {}
+end
+
+function Building.Client:Clear(player)
+    Building:Clear(player)
+    return Knit.pd(player).Inventory.Blocks
+end
+
 function Building.Client:RemoveObject(player, instanceID)
     Building:RemoveObject(player, instanceID)
     return Knit.pd(player).Inventory.Blocks
@@ -68,6 +84,7 @@ function Building.Client:AddObject(player, data)
     Building:MakeObject(player,instanceID,instanceName,instanceCFrame)
     local encoded = HttpService:JSONEncode({data[1], data[2], {data[3]:components()}})
     table.insert(Knit.pd(player).Plots.BoatData[Knit.pd(player).Plots.Index], encoded)
+    Knit.GetService('Values'):AddXP(player, 5)
     return Knit.pd(player).Inventory.Blocks
 end
 

@@ -2,7 +2,6 @@
 -- Author // @iohgoodness
 -- Description // Front UI
 
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
@@ -31,8 +30,12 @@ function Front:UpdateValues(money, gems, xp)
         self.lastGems = gems
     end
     local level,title = Levels.GetPlayerLevel(xp)
-    local xpNeeded = Levels.XPToNextLevel(level+1)
-    self.tween(self.ui.Front.Frame.Level.Fill, {Size = UDim2.fromScale(math.clamp(xp/(xpNeeded==0 and xp or xpNeeded+xp), 0.07, 1), 1)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    local nextXP = Levels.Data[math.clamp(level+1, 1, #Levels.Data)].XPThreshold
+    local subtract = 0
+    if level > 1 then
+        subtract = Levels.Data[level].XPThreshold
+    end
+    self.tween(self.ui.Front.Frame.Level.Fill, {Size = UDim2.fromScale(math.clamp((xp-subtract) / (nextXP-subtract), 0.07, 1), 1)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
     self.ui.Front.Frame.Level.TextLabel.Text = `{level}  |  {title}`
 end
 
@@ -61,7 +64,7 @@ function Front:KnitStart()
                 else
                     self.lastOpen = nil
                 end
-                if table.find({'Building'}, 'Building') then
+                if table.find({'Building'}, button.Name) then
                     Knit.toggle(button.Name, nil, true)
                 else
                     Knit.toggle(button.Name)
