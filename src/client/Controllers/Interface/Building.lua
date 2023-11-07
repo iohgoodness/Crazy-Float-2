@@ -41,6 +41,13 @@ function Building:KnitStart()
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             if self.ghostObject then
                 self:Place()
+            elseif self.deleteHighlightObject then
+                self.service:RemoveObject(tonumber(self.deleteHighlightObject.Name)):andThen(function(newInventoryData)
+                    Knit.GetController('Inventory').inventory = newInventoryData
+                    Knit.GetController('Inventory'):Load(self.ui.Building.Frame.Frame.Personal.Personal, function(item)
+                        Knit.GetController('Building'):Placing(item.Name)
+                    end)
+                end)
             end
         elseif input.UserInputType == Enum.UserInputType.Keyboard then
             if input.KeyCode == Enum.KeyCode.Q then
@@ -56,11 +63,7 @@ function Building:KnitStart()
     end)
     UserInputService.InputEnded:Connect(function(input, gp)
         if gp then return end
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            if self.deleteHighlight then
-                self:Place()
-            end
-        elseif input.UserInputType == Enum.UserInputType.Keyboard then
+        if input.UserInputType == Enum.UserInputType.Keyboard then
            if input.KeyCode == Enum.KeyCode.Q then
                 q = false
                 qt += 1
@@ -94,6 +97,16 @@ function Building:KnitStart()
     self.raycastParams.FilterDescendantsInstances = {workspace.Island.Ghost, workspace.Characters}
     self.raycastParams.FilterType = Enum.RaycastFilterType.Exclude
     self.raycastParams.IgnoreWater = true
+
+    self.btn(self.ui.Building.Frame.Placing.Personal.Trash, function()
+        self:Deleting()
+    end)
+    self.btn(self.ui.Building.Frame.Placing.Personal.Place, function()
+        self:Place()
+    end)
+    self.btn(self.ui.Building.Frame.Placing.Personal.Y, function()
+        self.ghostY = (self.ghostY==360-self.inc) and 0 or self.ghostY + 360/10 --[[ self.inc ]]
+    end)
 end
 
 function Building:Delete()
@@ -110,10 +123,8 @@ function Building:Place()
     self.service:AddObject(data):andThen(function(newInventoryData)
         self:StopPlacing()
         Knit.GetController('Inventory').inventory = newInventoryData
-        print(newInventoryData)
         Knit.GetController('Inventory'):Load(self.ui.Building.Frame.Frame.Personal.Personal, function(item)
-            local itemName = item.Name
-            Knit.GetController('Building'):Placing(itemName)
+            Knit.GetController('Building'):Placing(item.Name)
         end)
         self:Placing()
     end)
@@ -144,6 +155,10 @@ function Building:StopDeleting()
         self.deletingconn:Disconnect()
         self.deletingconn = nil
     end
+    if self.deleteHighlight then
+        self.deleteHighlight:Destroy()
+    end
+    self.tween(self.ui.Building.Frame.Placing.Personal.Trash, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
 end
 
 function Building:GetMouseHit()
@@ -166,14 +181,14 @@ function Building:Placing(itemName)
         if not v:IsA('BasePart') then continue end
         v.CanCollide = false
     end
-    self.ghostObjectSpringPosition = Spring.new(Vector3.new())
+    self.ghostObjectSpringPosition = Spring.new(self.ghostObject.PrimaryPart.Position)
     self.ghostObjectSpringRotation = Spring.new(Vector3.new())
     self.ghostObjectSpringPosition.Speed = 15
     self.ghostObjectSpringPosition.Damper = .75
     self.ghostObjectSpringRotation.Speed = 15
     self.ghostObjectSpringRotation.Damper = .75
     local mouse = self.mouse
-    self.placingconn = RunService.RenderStepped:Connect(function(dt)
+    self.placingconn = RunService.RenderStepped:Connect(function()
         local hit = self:GetMouseHit()
         if mouse.Target and hit and self.placingconn then
             self.ghostObjectSpringPosition.Target = hit.Position
@@ -193,17 +208,23 @@ function Building:GetObjectModel(part)
 end
 
 function Building:Deleting()
-    self:StopPlacing()
+    if self.placingconn then self:StopPlacing() end
+    if self.deletingconn then self:StopDeleting() return end
+    self.tween(self.ui.Building.Frame.Placing.Personal.Trash, {BackgroundColor3 = Color3.fromRGB(3, 124, 57)}, .1)
     local mouse = self.mouse
     self.deletingconn = RunService.RenderStepped:Connect(function(dt)
         local hit = self:GetMouseHit()
         if mouse.Target and hit and self.deletingconn then
             local object = self:GetObjectModel(mouse.Target)
             if object and object~=Workspace and object:FindFirstChild('Highlight')==nil then
+                if self.deleteHighlightObject and self.deleteHighlightObject ~= object and self.deleteHighlightObject:FindFirstChild('Highlight') then
+                    self.deleteHighlightObject.Highlight:Destroy()
+                end
                 self.deleteHighlight = Instance.new('Highlight')
                 self.deleteHighlight.Parent = object
                 self.deleteHighlight.Adornee = object
-            elseif object:FindFirstChild('Highlight') and not object or object==Workspace then
+                self.deleteHighlightObject = object
+            elseif (object:FindFirstChild('Highlight') and not object or object==Workspace) then
                 if self.deleteHighlight then
                     self.deleteHighlight:Destroy()
                 end

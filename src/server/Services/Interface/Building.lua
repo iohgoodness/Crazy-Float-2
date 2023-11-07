@@ -23,6 +23,7 @@ function Building:MakeObject(player,instanceID,instanceName,instanceCFrame)
     instance:PivotTo(instanceCFrame)
     instance.Name = instanceID
     instance:SetAttribute('Object', true)
+    instance:SetAttribute('ObjectName', instanceName)
     instance.Parent = grid.Objects
 end
 
@@ -43,14 +44,21 @@ function Building:RemoveObject(player, instanceID)
     if not grid then return end
     local instance = grid.Objects:FindFirstChild(instanceID)
     if not instance then return end
+    local objectName = instance:GetAttribute('ObjectName')
     instance:Destroy()
     for i,v in pairs(Knit.pd(player).Plots.BoatData[Knit.pd(player).Plots.Index]) do
         v = HttpService:JSONDecode(v)
         if v[1] == instanceID then
             table.remove(Knit.pd(player).Plots.BoatData[Knit.pd(player).Plots.Index], i)
+            Knit.pd(player).Inventory.Blocks[objectName] += 1
             return
         end
     end
+end
+
+function Building.Client:RemoveObject(player, instanceID)
+    Building:RemoveObject(player, instanceID)
+    return Knit.pd(player).Inventory.Blocks
 end
 
 function Building.Client:AddObject(player, data)

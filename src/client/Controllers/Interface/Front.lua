@@ -40,6 +40,7 @@ function Front:KnitStart()
     self.lastMoney = 0
     self.lastGems = 0
     self.lastXP = 0
+    self.lastOpen = nil
     self.defaultPositions = {}
     for _,v in pairs(self.ui.Front.Frame:GetChildren()) do
         if v:IsA('Frame') or v:IsA('TextLabel') then
@@ -51,6 +52,15 @@ function Front:KnitStart()
         if not button:IsA('ImageButton') then continue end
         self.btn(button, function()
             if self.ui:FindFirstChild(button.Name) then
+                self.cycle(self.ui.Front.Frame.Buttons, function(btn)
+                    self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
+                end)
+                if self.lastOpen ~= button.Name then
+                    self.tween(button, {BackgroundColor3 = Color3.fromRGB(3, 124, 57)}, .1)
+                    self.lastOpen = button.Name
+                else
+                    self.lastOpen = nil
+                end
                 if table.find({'Building'}, 'Building') then
                     Knit.toggle(button.Name, nil, true)
                 else
@@ -63,6 +73,9 @@ function Front:KnitStart()
         if ui:FindFirstChild('Frame') then
             if ui.Frame:FindFirstChild('X') then
                 self.btn(ui.Frame.X, function()
+                    self.cycle(self.ui.Front.Frame.Buttons, function(btn)
+                        self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
+                    end)
                     Knit.toggle(ui.Name)
                 end)
             end
