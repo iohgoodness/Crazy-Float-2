@@ -12,13 +12,19 @@ local Values = Knit.CreateService {
     },
 }
 
+function Values:AddXP(player, amount)
+    if not player then return end
+    Knit.pd(player).XP += amount
+    self.Client.PushValues:Fire(player, Knit.pd(player).Leaderboards.Money, Knit.pd(player).Leaderboards.Gems, Knit.pd(player).XP)
+end
+
 function Values:AddMoney(player, amount, special)
     if not player then return end
     Knit.pd(player).Leaderboards.Money += amount
     if special then
         self.ShopService.Client.PushPurchased:Fire(player, 'Coins', amount<2000 and 1 or amount<10000 and 2 or 3)
     end
-    self.Client.PushValues:Fire(player, Knit.pd(player).Leaderboards.Money, Knit.pd(player).Leaderboards.Gems)
+    self.Client.PushValues:Fire(player, Knit.pd(player).Leaderboards.Money, Knit.pd(player).Leaderboards.Gems, Knit.pd(player).XP)
 end
 
 function Values:AddGems(player, amount, special)
@@ -27,12 +33,13 @@ function Values:AddGems(player, amount, special)
     if special then
         self.ShopService.Client.PushPurchased:Fire(player, 'Gems', amount<200 and 1 or amount<500 and 2 or 3)
     end
-    self.Client.PushValues:Fire(player, Knit.pd(player).Leaderboards.Money, Knit.pd(player).Leaderboards.Gems)
+    self.Client.PushValues:Fire(player, Knit.pd(player).Leaderboards.Money, Knit.pd(player).Leaderboards.Gems, Knit.pd(player).XP)
 end
 
 function Values:PlayerAdded(player)
     self:AddMoney(player, 0)
     self:AddGems(player, 0)
+    self:AddXP(player, 0)
 end
 
 function Values:KnitStart()

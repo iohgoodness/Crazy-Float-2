@@ -10,9 +10,14 @@ local Front = Knit.CreateController { Name = "Front" }
 
 local Abbreviate = Knit.shared.Math.Abbreviate
 
-function Front:UpdateValues(money, gems)
+local Levels = Knit.cfg.Levels
+
+-- cap xp fill to 0.07 min
+
+function Front:UpdateValues(money, gems, xp)
     if not money then money = self.lastMoney end
     if not gems then gems = self.lastGems end
+    if not xp then xp = self.lastXP end
     if Knit.GetController('Settings').save and Knit.GetController('Settings').save['Abbreviate'] or false then
         money = Abbreviate(money)
         gems = Abbreviate(gems)
@@ -25,11 +30,16 @@ function Front:UpdateValues(money, gems)
     if gems and tonumber(gems) then
         self.lastGems = gems
     end
+    local level,title = Levels.GetPlayerLevel(xp)
+    local xpNeeded = Levels.XPToNextLevel(level+1)
+    self.tween(self.ui.Front.Frame.Level.Fill, {Size = UDim2.fromScale(math.clamp(xp/(xpNeeded==0 and xp or xpNeeded+xp), 0.07, 1), 1)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    self.ui.Front.Frame.Level.TextLabel.Text = `{level}  |  {title}`
 end
 
 function Front:KnitStart()
     self.lastMoney = 0
     self.lastGems = 0
+    self.lastXP = 0
     self.defaultPositions = {}
     for _,v in pairs(self.ui.Front.Frame:GetChildren()) do
         if v:IsA('Frame') or v:IsA('TextLabel') then
@@ -58,10 +68,11 @@ function Front:KnitStart()
             end
         end
     end
-    Knit.GetService('Values').PushValues:Connect(function(money, gems)
+    Knit.GetService('Values').PushValues:Connect(function(money, gems, xp)
         self.lastMoney = money
         self.lastGems = gems
-        self:UpdateValues(money, gems)
+        self.lastXP = xp
+        self:UpdateValues(money, gems, xp)
     end)
 end
 

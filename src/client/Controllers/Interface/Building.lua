@@ -29,8 +29,7 @@ function Building:KnitStart()
             self.cycle(self.ui.Building.Frame.Plot.Personal.Personal, function(btn)
                 self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
             end)
-            task.wait(.1)
-            task.wait(.12)
+            task.wait(.11)
             self.tween(button, {BackgroundColor3 = Color3.fromRGB(3, 124, 57)}, .1)
             self.service:ChangeBoat(tonumber(button.Name))
         end)
@@ -111,10 +110,11 @@ function Building:Place()
     self.service:AddObject(data):andThen(function(newInventoryData)
         self:StopPlacing()
         Knit.GetController('Inventory').inventory = newInventoryData
+        print(newInventoryData)
         Knit.GetController('Inventory'):Load(self.ui.Building.Frame.Frame.Personal.Personal, function(item)
             local itemName = item.Name
             Knit.GetController('Building'):Placing(itemName)
-        end, true)
+        end)
         self:Placing()
     end)
 end
@@ -134,6 +134,9 @@ function Building:StopPlacing()
     if self.ghostObjectSpringRotation then
         self.ghostObjectSpringRotation = nil
     end
+    self.cycle(self.ui.Building.Frame.Frame.Personal.Personal, function(btn)
+        self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
+    end)
 end
 
 function Building:StopDeleting()
@@ -153,10 +156,8 @@ function Building:GetMouseHit()
 end
 
 function Building:Placing(itemName)
-    if self.ghostObject then return end
-    if itemName then self.lastItem = itemName end
     if not itemName then itemName = self.lastItem end
-    if Knit.GetController('Inventory').inventory[itemName] == 0 then return end
+    if Knit.GetController('Inventory').inventory[itemName] == 0 then return self:StopPlacing() end
     self.ghostObject = ReplicatedStorage.Assets.Physical.Building.Blocks[itemName]:Clone()
     self.ghostObject.PrimaryPart.Transparency = 1
     self.ghostObject:PivotTo(Players.LocalPlayer.Character:GetPivot())
@@ -181,6 +182,7 @@ function Building:Placing(itemName)
             self.ghostObject:PivotTo(self.ghostCFrame)
         end
     end)
+    self.lastItem = itemName
 end
 
 function Building:GetObjectModel(part)

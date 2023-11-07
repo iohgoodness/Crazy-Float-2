@@ -41,6 +41,7 @@ function ProfileService:KnitStart()
             Money = 0;
             Gems = 0;
         };
+        XP = 180;
         RedeemedCodes = {};
         Settings = {
             Abbreviate = true;
@@ -51,8 +52,8 @@ function ProfileService:KnitStart()
             FOV = 5;
         };
         Inventory = {
-            --[[ Blocks = Knit.cfg.Blocks.GetMax(); ]]
-            Blocks = {['Wood Square'] = 5;};
+            Blocks = Knit.cfg.Blocks.GetMax();
+            --[[ Blocks = {['Wood Square'] = 5;}; ]]
             Plots = {
                 Plot = {
                     Active = 'Vaporwave';

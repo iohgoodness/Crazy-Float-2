@@ -11,17 +11,15 @@ local Viewport = Knit.shared.Viewport
 
 local Inventory = Knit.CreateController { Name = "Inventory" }
 
-function Inventory:Load(frame, fn, single)
+function Inventory:Load(frame, fn)
     if frame:FindFirstChild('Item') then
         self.items[frame] = Knit.cd(frame.Item)
     end
     for k,v in pairs(self.inventory) do
         if v == 0 and frame:FindFirstChild(k) then
             frame[k]:Destroy()
-            if single then break end
         elseif frame:FindFirstChild(k) then
             frame[k].Tab.Count.Text = v
-            if single then break end
         else
             local newItem = self.items[frame]:Clone()
             newItem.Name = k
@@ -50,9 +48,12 @@ function Inventory:Load(frame, fn, single)
             if fn then
                 self.btn(frame[k], function()
                     fn(frame[k])
+                    self.cycle(frame, function(btn)
+                        self.tween(btn, {BackgroundColor3 = Color3.fromRGB(189, 255, 197)}, .1)
+                    end)
+                    self.tween(frame[k], {BackgroundColor3 = Color3.fromRGB(3, 124, 57)}, .1)
                 end)
             end
-            if single then break end
         end
     end
 end
