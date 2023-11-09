@@ -33,6 +33,13 @@ function ProfileService.Client:GetKeyData(player, key)
     return lastTbl
 end
 
+function ProfileService:Default(ProfileTemplate)
+    if not ProfileTemplate.Achievements then
+        ProfileTemplate.Achievements = Knit.cfg.Achievements.GetDefault()
+    end
+    return ProfileTemplate
+end
+
 function ProfileService:KnitStart()
     local ProfileTemplate = {
         Leaderboards = {
@@ -69,6 +76,7 @@ function ProfileService:KnitStart()
             BoatData = {{};{};{};{};{};};
         };
     }
+    ProfileTemplate = self:Default(ProfileTemplate)
     local ProfileServiceModule = require(game.ServerScriptService.ProfileService)
     local Players = game:GetService("Players")
     local ProfileStore = ProfileServiceModule.GetProfileStore( KEY, ProfileTemplate )

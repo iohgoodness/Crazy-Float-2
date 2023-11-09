@@ -24,6 +24,7 @@ function Building:MakeObject(player,instanceID,instanceName,instanceCFrame)
     instance.Name = instanceID
     instance:SetAttribute('Object', true)
     instance:SetAttribute('ObjectName', instanceName)
+    Knit.GetService('Achievements'):Earn(player, 'Architect', 1)
     instance.Parent = grid.Objects
 end
 
