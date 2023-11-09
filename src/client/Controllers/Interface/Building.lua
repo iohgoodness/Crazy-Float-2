@@ -108,6 +108,8 @@ function Building:KnitStart()
         self.ghostY = (self.ghostY==360-self.inc) and 0 or self.ghostY + 360/10 --[[ self.inc ]]
     end)
     self.btn(self.ui.Building.Frame.Placing.Personal.Clear, function()
+        self:StopPlacing()
+        self:StopDeleting()
         if Knit.popup('interactive', `Are you sure you want to clear this plot?`, 'NO', 'YES') then
             self.service:Clear():andThen(function(newInventoryData)
                 Knit.GetController('Inventory').inventory = newInventoryData
@@ -116,6 +118,10 @@ function Building:KnitStart()
                 end)
             end)
         end
+    end)
+    self.btn(self.ui.Building.Frame.Placing.Personal.Cancel, function()
+        self:StopPlacing()
+        self:StopDeleting()
     end)
 end
 

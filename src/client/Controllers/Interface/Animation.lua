@@ -93,7 +93,7 @@ function Animation:KnitStart()
     self.image = self.cd(self.ui.Animation.ImageLabel)
     self.items = {
         Coins = {'rbxassetid://15222450377'};
-        Gems = {'rbxassetid://15210897123', 'rbxassetid://15210894446'};
+        Gems = {'rbxassetid://15299117188'};
     }
     repeat task.wait() until Players.LocalPlayer:GetAttribute('MoneyTimer') or Players.LocalPlayer:GetAttribute('GemsTimer')
     Thread.DelayRepeat(1, function()

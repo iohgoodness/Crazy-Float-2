@@ -35,7 +35,11 @@ function Front:UpdateValues(money, gems, xp)
     if level > 1 then
         subtract = Levels.Data[level].XPThreshold
     end
-    self.tween(self.ui.Front.Frame.Level.Fill, {Size = UDim2.fromScale(math.clamp((xp-subtract) / (nextXP-subtract), 0.07, 1), 1)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    if level == #Levels.Data then
+        self.ui.Front.Frame.Level.Fill.Size = UDim2.fromScale(1, 1)
+    else
+        self.tween(self.ui.Front.Frame.Level.Fill, {Size = UDim2.fromScale(math.clamp((xp-subtract) / (nextXP-subtract), 0.07, 1), 1)}, .31, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    end
     self.ui.Front.Frame.Level.TextLabel.Text = `{level}  |  {title}`
 end
 
