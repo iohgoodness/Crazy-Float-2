@@ -13,21 +13,53 @@ local Webhooks = Knit.CreateService {
 }
 
 local WEBHOOKS = {
-    MOD_LOGGING = {
-        Hook = 'https://webhook.lewisakura.moe/api/webhooks/1158183177744039997/32uhnO-dL-8BZVRmd9AXsOjnMxg-651uij5GJ6e9OPBE5CVko4W5j4ga6DxOGfREXdbM';
+    Logs = {
+        Hook = 'https://webhook.lewisakura.moe/api/webhooks/1173316561042407424/ta1MuT0OutY9-hOUv7N_nMeKNGIWo4s5u6q5keU4kzq0nLIz0CpOsaBv7sfwAz9qSrRa';
         JSONData = {
-            avatar_url = 'https://i.postimg.cc/qRSNz1Zw/gifgit-3.gif';
-            username = 'MOD LOGS';
+            avatar_url = 'https://i.postimg.cc/q7bgxX4C/release-icon.png';
+            username = 'Logger';
             embeds = {
                 {
-                    title = '・Player {X} gave to Player {Y}.\n・Gave x{count} {item}.';
+                    title = '🔇 MUTE';
                     description = '';
-                    color = tonumber('0xD98EFF');
+                    color = tonumber('0xf44336');
+                    thumbnail = {
+                        url = '';
+                    };
+                    fields = {
+                        {
+                            name = 'Offender';
+                            value = '';
+                        };
+                        {
+                            name = 'Reason';
+                            value = '';
+                        };
+                        {
+                            name = 'Action';
+                            value = '';
+                        };
+                    };
+                    footer = {
+                        text = 'Mod Log';
+                        icon_url = 'https://i.postimg.cc/q7bgxX4C/release-icon.png';
+                    };
                 };
             };
         };
-    };
+    }
 }
+
+function Webhooks:Log(player, target, title, action, reason)
+    local newJSONData = WEBHOOKS.Logs.JSONData
+    newJSONData.embeds[1].title = `**{title}**`
+    newJSONData.embeds[1].fields[1].value = `> **{target.Name}({target.UserId})**`
+    newJSONData.embeds[1].fields[2].value = `> **{reason}**`
+    newJSONData.embeds[1].fields[3].value = `> **{action}**`
+    newJSONData.embeds[1].footer.text = `{player.Name}({player.UserId})`
+    newJSONData.embeds[1].title = title
+    self:Send(WEBHOOKS.Logs.Hook, HttpService:JSONEncode(newJSONData))
+end
 
 function Webhooks:GetHeadshot(userId)
     local httpService = game:GetService("HttpService")

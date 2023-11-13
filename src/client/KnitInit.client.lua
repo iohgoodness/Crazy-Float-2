@@ -156,6 +156,10 @@ Knit.popup = function(popupType, mainText, noText, yesText)
         ui.Notification.Okay.Frame.TextLabel.Text = mainText or 'No text provided'
         Knit.toggle('Notification', 'Okay')
         toggleData = 'Okay'
+    elseif popupType == 'input' then
+        ui.Notification.Input.Frame.TextLabel.Text = mainText or 'No text provided'
+        Knit.toggle('Notification', 'Input')
+        toggleData = 'Input'
     end
     repeat task.wait() until Knit.popupAnswer~=nil
     local answerCopy = Knit.popupAnswer
