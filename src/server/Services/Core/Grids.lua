@@ -36,6 +36,7 @@ function Grids:SwapLabel(player, labelName)
     local plot = foundGrid[Knit.pd(player).Inventory.Plots.Plot.Active]
     local label = plot.Base:FindFirstChildOfClass('BillboardGui')
     local newLabel = ReplicatedStorage.Assets.UI.Plots.Labels[labelName]:Clone()
+    newLabel.Frame.Bar.TextLabel.Text = player.DisplayName
     label:Destroy()
     newLabel.Parent = plot.Base
     Knit.modules.Labels[labelName](newLabel.Frame.Bar.TextLabel)
@@ -73,6 +74,7 @@ function Grids:PlayerAdded(player)
     player.CharacterAdded:Connect(function(character)
         character.Parent = workspace.Characters
     end)
+    character.Humanoid.WalkSpeed = 40
 end
 
 function Grids:PlayerRemoving(player)

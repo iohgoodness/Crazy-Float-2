@@ -65,11 +65,18 @@ Knit.toggle = function(uiName, frame, disableDimmer)
         task.wait(.121)
         debounce = false
         return
-    elseif lastOpenFrame then
+    elseif lastOpenFrame and not disableDimmer then
         TweenService:Create(lastOpenFrame, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
         task.wait(.081)
         lastOpenFrame.Visible = false
         inUI = true
+    elseif lastOpenFrame and disableDimmer then
+        TweenService:Create(lastOpenFrame, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.fromScale(0,0)}):Play()
+        task.wait(.081)
+        lastOpenFrame.Visible = false
+        inUI = true
+        TweenService:Create(game.Lighting.Blur, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = 0}):Play()
+        TweenService:Create(game.Lighting.ColorCorrection, TweenInfo.new(0.48, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {TintColor = Color3.fromRGB(255,255,255)}):Play()
     end
 
     if not disableDimmer then

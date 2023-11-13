@@ -84,6 +84,7 @@ function Shop:KnitStart()
             self:ChangePage(button.Name)
         end)
     end
+    --self.cycle()
 end
 
 return Shop

@@ -49,6 +49,31 @@ function Front:KnitStart()
     self.lastXP = 0
     self.lastOpen = nil
     self.defaultPositions = {}
+    local UIon = true
+    self.UIChanged = {}
+    self.btn(self.ui.Front.HideUI, function()
+        -- hide all ui in game
+        self.ui.Front.HideUI.Tab.TextLabel.Text = UIon and 'SHOW UI' or 'HIDE UI'
+        UIon = not UIon
+        if UIon then
+            for _,v in pairs(self.UIChanged) do
+                v.Visible = true
+            end
+            self.UIChanged = {}
+        else
+            for _,object in pairs(self.ui:GetDescendants()) do
+                if object:GetFullName():find('HideUI') then continue end
+                pcall(function()
+                    if object.Visible == true then
+                        object.Visible = UIon
+                        if not table.find(self.UIChanged, object) then
+                            table.insert(self.UIChanged, object)
+                        end
+                    end
+                end)
+            end
+        end
+    end)
     for _,v in pairs(self.ui.Front.Frame:GetChildren()) do
         if v:IsA('Frame') or v:IsA('TextLabel') then
             self.defaultPositions[v] = v.Position

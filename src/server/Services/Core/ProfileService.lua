@@ -40,7 +40,7 @@ function ProfileService:Default(ProfileTemplate)
     return ProfileTemplate
 end
 
-function ProfileService:KnitStart()
+function ProfileService:KnitInit()
     local ProfileTemplate = {
         Leaderboards = {
             Level = 0;
@@ -58,8 +58,7 @@ function ProfileService:KnitStart()
             FOV = 5;
         };
         Inventory = {
-            Blocks = Knit.cfg.Blocks.GetMax();
-            --[[ Blocks = {['Wood Square'] = 5;}; ]]
+            Blocks = Knit.cfg.Blocks.GetMax(10);
             Plots = {
                 Plot = {
                     Active = 'Vaporwave';

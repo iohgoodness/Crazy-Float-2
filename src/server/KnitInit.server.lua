@@ -26,7 +26,10 @@ local readyRemote = Instance.new('RemoteEvent') ; readyRemote.Name = 'Ready' ; r
 readyRemote.OnServerEvent:Connect(function(player) players[player] = true end)
 
 local function PlayerAdded(player)
-    repeat task.wait() until (Knit.Profiles[player] and players[player]) or player:IsDescendantOf(game.Players) == false
+    repeat
+        task.wait(.1)
+    until
+        Knit.Profiles and (Knit.Profiles[player] and players[player]) or player:IsDescendantOf(game.Players) == false
     if player:IsDescendantOf(game.Players) == false then return end
     for _,moduleScript in pairs(game.ServerScriptService.Server.Services:GetDescendants()) do
         if not moduleScript:IsA('ModuleScript') then continue end

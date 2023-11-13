@@ -22,7 +22,7 @@ function Building:KnitStart()
     self.ghostY = 0
     self.ghostZ = 0
     self.selectedBoat = 1
-    self.inc = 2
+    self.inc = 15
     self.doubletapcd = .200
     self.cycle(self.ui.Building.Frame.Plot.Personal.Personal, function(button)
         self.btn(button, function()
@@ -51,9 +51,11 @@ function Building:KnitStart()
             end
         elseif input.UserInputType == Enum.UserInputType.Keyboard then
             if input.KeyCode == Enum.KeyCode.Q then
-                q = true
+                --q = true
+                self.ghostY += 45
             elseif input.KeyCode == Enum.KeyCode.E then
-                e = true
+                --e = true
+                self.ghostY -= 45
             elseif input.KeyCode == Enum.KeyCode.C then
                 self:StopPlacing()
             elseif input.KeyCode == Enum.KeyCode.Delete or input.KeyCode == Enum.KeyCode.Backspace then
@@ -125,12 +127,9 @@ function Building:KnitStart()
     end)
 end
 
-function Building:Delete()
-
-end
-
 function Building:Place()
     if not self.ghostObject then return end
+    if not self.placeable then return end
     local data = {
         #workspace.Island.Grids[Players.LocalPlayer.Name].Objects:GetChildren();
         self.ghostObject.Name;
@@ -188,6 +187,19 @@ function Building:GetMouseHit()
     end
 end
 
+function Building:GetMouseTarget()
+    local mouse = UserInputService:GetMouseLocation()
+    local ray = workspace.Camera:ViewportPointToRay(mouse.X, mouse.Y)
+    local result = workspace:Raycast(ray.Origin, ray.Direction * 1000, self.raycastParams)
+    if result then
+        return result.Instance
+    end
+end
+
+function Building:RoundToNearestIncrement(number, increment)
+    return math.floor(number / increment + 0.5) * increment
+end
+
 function Building:Placing(itemName)
     if self.deletingconn then self:StopDeleting() end
     if not itemName then itemName = self.lastItem end
@@ -201,17 +213,20 @@ function Building:Placing(itemName)
         if not v:IsA('BasePart') then continue end
         v.CanCollide = false
     end
-    self.ghostObjectSpringPosition = Spring.new(self.ghostObject.PrimaryPart.Position)
+    self.ghostObjectSpringPosition = Spring.new(Vector3.new())
     self.ghostObjectSpringRotation = Spring.new(Vector3.new())
     self.ghostObjectSpringPosition.Speed = 15
     self.ghostObjectSpringPosition.Damper = .75
     self.ghostObjectSpringRotation.Speed = 15
     self.ghostObjectSpringRotation.Damper = .75
-    local mouse = self.mouse
+    self.increment = 1
+    self.allowedGrids = {Players.LocalPlayer.Name}
+    self.placeable = false
     self.placingconn = RunService.RenderStepped:Connect(function()
         local hit = self:GetMouseHit()
-        if mouse.Target and hit and self.placingconn then
-            self.ghostObjectSpringPosition.Target = hit.Position
+        local target = self:GetMouseTarget()
+        if target and hit then
+            self.ghostObjectSpringPosition.Target = Vector3.new(self:RoundToNearestIncrement(hit.Position.X, self.increment), self:RoundToNearestIncrement(hit.Position.Y, self.increment), self:RoundToNearestIncrement(hit.Position.Z, self.increment))
             self.ghostObjectSpringRotation.Target = Vector3.new(self.ghostX, self.ghostY, self.ghostZ)
             local pos = self.ghostObjectSpringRotation.Position
             self.ghostCFrame = CFrame.new(self.ghostObjectSpringPosition.Position) * CFrame.Angles(
@@ -220,6 +235,16 @@ function Building:Placing(itemName)
                 math.rad(pos.Z)
             )
             self.ghostObject:PivotTo(self.ghostCFrame)
+            if target and target.Parent and target.Parent.Parent and target.Parent.Parent.Name == Players.LocalPlayer.Name and target.Name == 'Base' or (target:GetFullName():find('iohgoodness') and target:GetFullName():find('Objects')) then
+                if self.highlight then self.highlight:Destroy(); self.highlight = nil end
+                self.placeable = true
+            elseif not self.highlight then
+                self.placeable = false
+                self.highlight = Instance.new('Highlight')
+                self.highlight.Parent = self.ghostObject
+                self.highlight.FillColor = Color3.fromRGB(0, 0, 0)
+                self.highlight.Adornee = self.ghostObject
+            end
         end
     end)
     self.lastItem = itemName

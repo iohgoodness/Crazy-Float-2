@@ -38,7 +38,6 @@ end
 function Achievements:KnitStart()
     local template = self.cd(self.ui.Achievements.Frame.Frame.Achievements.Achievements.Template)
     self.service.PushValues:Connect(function(values)
-        print(values)
         for achName,achData in pairs(cfg.Achievements) do
             local foundTemplate = self.ui.Achievements.Frame.Frame.Achievements.Achievements:FindFirstChild(achName)
             if foundTemplate then
