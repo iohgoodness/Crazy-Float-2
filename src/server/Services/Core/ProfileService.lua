@@ -40,8 +40,27 @@ function ProfileService:Default(ProfileTemplate)
     return ProfileTemplate
 end
 
+function ProfileService:Rollback(UserId, year, month, day, hour, minute, second)
+    local ProfileStore = ProfileService.GetProfileStore(KEY, self.ProfileTemplate)
+    local max_date = DateTime.fromUniversalTime(year, month, day, hour, minute, second)
+    local query = ProfileStore:ProfileVersionQuery(
+    "Player_2312310",
+    Enum.SortDirection.Descending,
+    nil,
+    max_date
+    )
+    local profile = query:NextAsync()
+    if profile ~= nil then
+        profile:ClearGlobalUpdates()
+        profile:OverwriteAsync()
+        print("Rollback success!")
+    else
+        print("No version to rollback to")
+    end
+end
+
 function ProfileService:KnitInit()
-    local ProfileTemplate = {
+    self.ProfileTemplate = {
         Leaderboards = {
             Level = 0;
             Money = 0;
@@ -74,11 +93,12 @@ function ProfileService:KnitInit()
             Index = 1;
             BoatData = {{};{};{};{};{};};
         };
+        SailingDevproducts = {};
     }
-    ProfileTemplate = self:Default(ProfileTemplate)
+    self.ProfileTemplate = self:Default(self.ProfileTemplate)
     local ProfileServiceModule = require(game.ServerScriptService.ProfileService)
     local Players = game:GetService("Players")
-    local ProfileStore = ProfileServiceModule.GetProfileStore( KEY, ProfileTemplate )
+    local ProfileStore = ProfileServiceModule.GetProfileStore(KEY, self.ProfileTemplate)
     Knit.Profiles = {}
     local function PlayerAdded(player)
         local profile = ProfileStore:LoadProfileAsync("Player_" .. player.UserId)

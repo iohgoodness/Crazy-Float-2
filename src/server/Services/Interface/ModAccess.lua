@@ -9,7 +9,9 @@ local ChatService = require(game:GetService('ServerScriptService'):WaitForChild(
 
 local ModAccess = Knit.CreateService {
     Name = "ModAccess",
-    Client = {},
+    Client = {
+        Visible = Knit.CreateSignal();
+    },
 }
 
 ModAccess.fns = {
@@ -88,7 +90,11 @@ function ModAccess.Client:Action(player, target, action, reason)
     if not target then return end
     if not ModAccess:Verify(player) then return end
     if not ModAccess.fns[action] then return end
-    ModAccess.fns[action](player, target, reason)
+    ModAccess.fns[action](player, target, reason) 
+end
+
+function ModAccess:PlayerAdded(player)
+    self.Client.Visible:Fire(player, self:Verify(player))
 end
 
 return ModAccess

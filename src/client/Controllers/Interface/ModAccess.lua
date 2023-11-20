@@ -16,6 +16,7 @@ function ModAccess:ConfigurePanel(panel, target)
                 if reason then
                     self.service:Action(target, `{btn.Name}{btn.Parent.Name}`, reason)
                 end
+                self.toggle('ModAccess', nil, true)
             end)
         end)
     end
@@ -24,18 +25,21 @@ function ModAccess:ConfigurePanel(panel, target)
         if reason then
             self.service:Action(target, `Kick`, reason)
         end
+        self.toggle('ModAccess', nil, true)
     end)
     self.btn(panel.MetoThem, function()
         local reason = Knit.popup('input', `Why are you teleporting to {target}?`, 'CONFIRM')
         if reason then
             self.service:Action(target, `MetoThem`, reason)
         end
+        self.toggle('ModAccess', nil, true)
     end)
     self.btn(panel.ThemToMe, function()
         local reason = Knit.popup('input', `Why are you teleporting {target} to you?`, 'CONFIRM')
         if reason then
             self.service:Action(target, `ThemToMe`, reason)
         end
+        self.toggle('ModAccess', nil, true)
     end)
     self.cycle(panel.Rollback, function(btn)
         self.btn(btn, function()
@@ -43,6 +47,7 @@ function ModAccess:ConfigurePanel(panel, target)
             if reason then
                 self.service:Action(target, `{btn.Name}`, reason)
             end
+            self.toggle('ModAccess', nil, true)
         end)
     end)
 end
@@ -52,6 +57,15 @@ function ModAccess:KnitStart()
     self.lastPanel = nil
     self.panel = self.cd(self.ui.ModAccess.Frame.Frame.Mod.Mod.Template.Template)
     self.playerFrame = self.cd(self.ui.ModAccess.Frame.Frame.Mod.Mod.Template)
+    self.service.Visible:Connect(function()
+        self.ui.Front.ModAccess.Visible = true
+        local dragObj = require(game.ReplicatedStorage.Shared.DraggableObject)
+        local frameDrag = dragObj.new(self.ui.ModAccess.Frame)
+        frameDrag:Enable()
+        self.btn(self.ui.Front.ModAccess, function()
+            self.toggle('ModAccess', nil, true)
+        end)
+    end)
 end
 
 function ModAccess:PlayerAdded(player)

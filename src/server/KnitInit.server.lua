@@ -11,7 +11,9 @@ local Thread = require(ReplicatedStorage.Packages.Thread)
 
 Knit.GroupID = 9291891
 
-workspace.Studio:Destroy()
+if workspace:FindFirstChild('Studio') then
+    workspace.Studio:Destroy()
+end
 
 local modules = {}; for _,module in pairs(ReplicatedStorage.Shared:GetDescendants()) do if module:IsA('ModuleScript') then modules[tostring(module)]=require(module) end end; Knit.shared = modules;
 modules = {}; for _,module in pairs(ReplicatedStorage.Configurations:GetDescendants()) do if module:IsA('ModuleScript') then modules[tostring(module)]=require(module) end end; Knit.cfg = modules;

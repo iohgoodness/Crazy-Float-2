@@ -89,4 +89,9 @@ function Webhooks:Send(hook, JSONData)
     end)
 end
 
+function Webhooks:SendSheets(playerName, playerTime)
+
+end
+
+
 return Webhooks

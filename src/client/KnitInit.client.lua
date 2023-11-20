@@ -42,10 +42,12 @@ Knit.btn = function(btn, fn, timer, scale, ignoreRotate)
 end
 
 local lastOpenFrame = nil
+local luiName, lframe, ldisableDimmer = nil, nil, nil
 local debounce = false
 Knit.toggle = function(uiName, frame, disableDimmer)
     if debounce then return end
     debounce = true
+    luiName, lframe, ldisableDimmer = uiName, frame, disableDimmer
     local inUI = false
     local player = Players.LocalPlayer
     local playerGui = player:WaitForChild('PlayerGui')
@@ -94,6 +96,29 @@ Knit.toggle = function(uiName, frame, disableDimmer)
     debounce = false
 end
 
+local UserInputService = game:GetService("UserInputService")
+local function isWithinFrame(frame, input)
+    if not frame then return end
+    local frameCorners = frame.AbsolutePosition
+    local frameSize = frame.AbsoluteSize
+    local clickPosition = input.Position
+    return
+        clickPosition.X >= frameCorners.X and
+        clickPosition.X <= frameCorners.X + frameSize.X and
+        clickPosition.Y >= frameCorners.Y and
+        clickPosition.Y <= frameCorners.Y + frameSize.Y
+end
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        if lastOpenFrame and not isWithinFrame(lastOpenFrame, input) and not ldisableDimmer then
+            Knit.toggle(luiName, lframe)
+        end
+    end
+end)
+
+
 Knit.tween = function(obj, tbl, timer, easingStyle, easingDirection, repeatCount, reverses)
     TweenService:Create(obj, TweenInfo.new(timer or 0.21, easingStyle or Enum.EasingStyle.Linear, easingDirection or Enum.EasingDirection.InOut, repeatCount or 0, reverses or false), tbl):Play()
 end
@@ -120,7 +145,7 @@ Knit.cd = function(obj)
 end
 
 Knit.cycle = function(frame, fn)
-    for _,v in pairs(frame:GetChildren()) do
+    for _,v in pairs(frame:GetDescendants()) do
         if not v:IsA('ImageButton') then continue end
         fn(v)
     end

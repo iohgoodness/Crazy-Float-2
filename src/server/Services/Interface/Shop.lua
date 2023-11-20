@@ -145,7 +145,7 @@ function Shop:KnitStart()
     end)
 
     for i,v in pairs(cfg.Coins) do
-        productFunctions[v.ID] = function(receipt, player)
+        productFunctions[v.ID] = function(_, player)
             Knit.GetService('Values'):AddMoney(player, v.Amount, true)
             if i == 7 then
                 self:GiveGlobalGift(`[SERVER GIFT] {string.upper(player.Name)} bought a Coin Wheelbarrow so everyone gets +{cfgGifts.Values.Coins} coins!`)
@@ -154,13 +154,26 @@ function Shop:KnitStart()
         end
     end
     for i,v in pairs(cfg.Gems) do
-        productFunctions[v.ID] = function(receipt, player)
+        productFunctions[v.ID] = function(_, player)
             Knit.GetService('Values'):AddGems(player, v.Amount, true)
             if i == 7 then
                 self:GiveGlobalGift(`[SERVER GIFT] {string.upper(player.Name)} bought a [GEM ITEM] so everyone gets +{cfgGifts.Values.Gems} gems!`)
             end
             return true
         end
+    end
+
+    -- double coins
+    productFunctions[1329369675] = function(_, player)
+        Knit.pd(player)
+    end
+    -- double gems
+    productFunctions[1690879524] = function(_, player)
+
+    end
+    -- double hp
+    productFunctions[1329370335] = function(_, player)
+
     end
 
     local function processReceipt(receiptInfo)
