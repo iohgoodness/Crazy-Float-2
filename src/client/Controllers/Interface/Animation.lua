@@ -94,6 +94,7 @@ function Animation:KnitStart()
     self.items = {
         Coins = {'rbxassetid://15222450377'};
         Gems = {'rbxassetid://15299117188'};
+        Robux = {'rbxassetid://12271474871'};
     }
     repeat task.wait() until Players.LocalPlayer:GetAttribute('MoneyTimer') or Players.LocalPlayer:GetAttribute('GemsTimer')
     Thread.DelayRepeat(1, function()

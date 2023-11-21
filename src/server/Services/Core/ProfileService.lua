@@ -64,7 +64,7 @@ function ProfileService:KnitInit()
         Leaderboards = {
             Level = 0;
             Money = 0;
-            Gems = 0;
+            Gems = 350;
         };
         XP = 0;
         RedeemedCodes = {};
@@ -93,7 +93,13 @@ function ProfileService:KnitInit()
             Index = 1;
             BoatData = {{};{};{};{};{};};
         };
-        SailingDevproducts = {};
+        Sailing = {
+            DevProducts = {
+                HP = 0;
+                Coins = 3;
+                Gems = 0;
+            };
+        };
     }
     self.ProfileTemplate = self:Default(self.ProfileTemplate)
     local ProfileServiceModule = require(game.ServerScriptService.ProfileService)

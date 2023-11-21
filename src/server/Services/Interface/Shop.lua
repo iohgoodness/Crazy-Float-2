@@ -165,15 +165,24 @@ function Shop:KnitStart()
 
     -- double coins
     productFunctions[1329369675] = function(_, player)
-        Knit.pd(player)
+        local SailService = Knit.GetService('Sail')
+        Knit.pd(player).Sailing.DevProducts['Coins'] += 1
+        SailService.Client.Pull:Fire(player, Knit.pd(player).Sailing.DevProducts)
+        return true
     end
     -- double gems
     productFunctions[1690879524] = function(_, player)
-
+        local SailService = Knit.GetService('Sail')
+        Knit.pd(player).Sailing.DevProducts['Gems'] += 1
+        SailService.Client.Pull:Fire(player, Knit.pd(player).Sailing.DevProducts)
+        return true
     end
     -- double hp
     productFunctions[1329370335] = function(_, player)
-
+        local SailService = Knit.GetService('Sail')
+        Knit.pd(player).Sailing.DevProducts['HP'] += 1
+        SailService.Client.Pull:Fire(player, Knit.pd(player).Sailing.DevProducts)
+        return true
     end
 
     local function processReceipt(receiptInfo)
