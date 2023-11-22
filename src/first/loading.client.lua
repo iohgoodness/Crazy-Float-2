@@ -1,146 +1,104 @@
 -- Timestamp // 05/28/2023 19:07:01 MNT
 -- Author // @iohgoodness
 -- Description // For loading the client
---[[ 
-SKIP_LOADING = true
 
-local Debris = game:GetService("Debris")
-local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
+local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
-local ReplicatedFirst = game:GetService("ReplicatedFirst")
+local TweenService = game:GetService("TweenService")
 local ContentProvider = game:GetService("ContentProvider")
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild('PlayerGui')
-local camera = workspace.CurrentCamera
-camera.FieldOfView = 75
-
-local ZOOMED_IN = CFrame.new(-39.1523094, -272.164185, -8171.73828, 0.959244549, 0.138704196, 0.246193513, -0, 0.871242225, -0.490853459, -0.282577604, 0.470848501, 0.835734189)
-local ZOOMED_OUT = CFrame.new(-15.1950235, -319.332336, -8090.4585, 0.959226429, 0.137463585, 0.246958345, -0, 0.873759747, -0.486357898, -0.282638729, 0.466527343, 0.838133454)
-
-local loadingUI = ReplicatedFirst:WaitForChild('LoadingIntro')
-local playUI = ReplicatedFirst:WaitForChild('PlayIntro')
-local frontUI = playerGui:WaitForChild('Front')
-
-local loadingUIFrame = loadingUI:WaitForChild('Frame')
-local loadingUIGradient = loadingUIFrame:WaitForChild('UIGradient')
-local loadingUIText = loadingUI:WaitForChild('Title')
-local loadingUITextGradient = loadingUIText:WaitForChild('UIGradient')
-
-local playUITitle1 = playUI:WaitForChild('Title1')
-local playUITitle2 = playUI:WaitForChild('Title2')
-local playUIBtn = playUI:WaitForChild('PlayBtn')
-local playUIBtnUIStroke = playUIBtn:WaitForChild('UIStroke')
-local playUIFrame = playUI:WaitForChild('Frame')
-
-local waitingUI = playerGui:WaitForChild('Waiting')
-local waitingMenu = waitingUI:WaitForChild('Menu')
-
 ContentProvider:PreloadAsync({
-    loadingUI;
-    playUI;
+    playerGui:WaitForChild('Loading');
+    playerGui:WaitForChild('Loading'):WaitForChild('Black');
 });
 
-if SKIP_LOADING then
-    _G.AllowRotate = true
-    task.delay(4, function() ReplicatedFirst:RemoveDefaultLoadingScreen() end)
-    frontUI.Enabled = true
-    _G.PlayButtonHit = true
-    frontUI.Frame.Visible = true
-    playUI:Destroy()
-    loadingUI:Destroy()
-    script:Destroy()
+playerGui:WaitForChild('Loading'):WaitForChild('Black').BackgroundTransparency = 0
+playerGui:WaitForChild('Loading'):WaitForChild('Version').Position = UDim2.fromScale(0.15, -.5)
+playerGui:WaitForChild('Loading'):WaitForChild('Content').Position = UDim2.fromScale(0.85, 1.5)
+
+playerGui:WaitForChild('Loading').Enabled = true
+
+ReplicatedFirst:RemoveDefaultLoadingScreen()
+
+local camera = workspace.CurrentCamera
+local blur = Lighting:WaitForChild('Blur')
+
+SKIP_LOADING = true
+
+local function tween(obj, tbl, timer, easingStyle, easingDirection, repeatCount, reverses)
+    TweenService:Create(obj, TweenInfo.new(timer or 0.21, easingStyle or Enum.EasingStyle.Linear, easingDirection or Enum.EasingDirection.InOut, repeatCount or 0, reverses or false), tbl):Play()
 end
 
-if not SKIP_LOADING then
+local function tween2(obj, tbl, timer, easingStyle, easingDirection, repeatCount, reverses)
+    return TweenService:Create(obj, TweenInfo.new(timer or 0.21, easingStyle or Enum.EasingStyle.Linear, easingDirection or Enum.EasingDirection.InOut, repeatCount or 0, reverses or false), tbl)
+end
 
-    loadingUI.Parent = playerGui
+local spawnPoint = CFrame.new(-16.477808, 3.90949726, 38.7186852, -0.203543916, -0.108843409, -0.972996891, -1.86264537e-09, 0.993801355, -0.111170664, 0.979065895, -0.0226281099, -0.20228219)
+camera.CameraType = Enum.CameraType.Scriptable
 
-    task.delay(4, function() ReplicatedFirst:RemoveDefaultLoadingScreen() end)
+game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
 
-    game.StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.All, false)
-
-    task.spawn(function()
-        for i=1, 5 do
-            TweenService:Create(loadingUITextGradient, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 0}):Play()
-            task.wait(3.1)
-            TweenService:Create(loadingUITextGradient, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Rotation = 120}):Play()
-            task.wait(3.1)
-        end
-    end)
-
-    task.spawn(function()
-        for i=1, 5 do
-            TweenService:Create(loadingUIGradient, TweenInfo.new(1.85, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Offset = Vector2.new(0,math.random(15,30)/100)}):Play()
-            task.wait(1.85)
-            TweenService:Create(loadingUIGradient, TweenInfo.new(1.75, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {Offset = Vector2.new(0,math.random(40,55)/100)}):Play()
-            task.wait(1.75)
-        end
-    end)
-
-    local loaded = false
-    task.spawn(function()
-        local x,y = 45,65
-        for i=1, 4 do
-            loadingUIText.Text = 'L O A D I N G'
-            task.wait(math.random(x,y)/100)
-            loadingUIText.Text = 'L O A D I N G .'
-            task.wait(math.random(x,y)/100)
-            loadingUIText.Text = 'L O A D I N G . .'
-            task.wait(math.random(x,y)/100)
-            loadingUIText.Text = 'L O A D I N G . . .'
-            task.wait(math.random(x,y)/100)
-        end
-        loaded = true
-    end)
-
-    repeat task.wait() until loaded
-
-    local camera = workspace.CurrentCamera
+RunService:BindToRenderStep('Loading', 1, function()
     camera.CameraType = Enum.CameraType.Scriptable
-    camera.CFrame = ZOOMED_OUT
+    camera.FieldOfView = 55
+    spawnPoint *= CFrame.Angles(0, math.rad(0.1), 0)
+    camera.CFrame = spawnPoint
+    blur.Size = 14
+end)
 
-    loadingUIText.Text = 'R E A D Y'
-    TweenService:Create(loadingUIText, TweenInfo.new(1.75, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {TextTransparency = 1}):Play()
-    TweenService:Create(loadingUIFrame, TweenInfo.new(1.75, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {Transparency = 1}):Play()
-    Debris:AddItem(loadingUI, 1.76)
-    task.wait(1.76)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Black'), {BackgroundTransparency = 1}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(1)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Version'), {Position = UDim2.fromScale(0.15, 0.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Content'), {Position = UDim2.fromScale(0.85, 0.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(.5)
 
-    playUI.Parent = playerGui
+local hiding = false
+local t1, t2
+task.spawn(function()
+    while not hiding do
+        t1 = tween2(playerGui.Loading.Desc, {Position = UDim2.fromScale(.5, .89)}, 1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        t1:Play()
+        task.wait(1.21)
+        if hiding then break end
+        t2 = tween2(playerGui.Loading.Desc, {Position = UDim2.fromScale(.5, .91)}, 1.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+        t2:Play()
+        task.wait(1.21)
+        if hiding then break end
+    end
+end)
 
-    TweenService:Create(camera, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {CFrame = ZOOMED_IN}):Play()
+tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.2)}, 2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(2+math.random(14, 21)/40)
+tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.4)}, 2.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(2.2+math.random(14, 21)/40)
+tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.5)}, 1.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(1.6+math.random(14, 21)/40)
+tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.7)}, 3.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(3.2+math.random(14, 21)/40)
+tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-1)}, 1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(1+math.random(14, 21)/40)
 
-    playUITitle1.TextTransparency = 1
-    playUITitle2.TextTransparency = 1
+tween(playerGui.Loading.ImageLabel, {Rotation = 60; Size = UDim2.fromScale(1.8, 1.8)}, 1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Version'), {Position = UDim2.fromScale(0.15, 1.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Content'), {Position = UDim2.fromScale(0.85, -0.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+hiding = true
+t1:Cancel()
+t2:Cancel()
+tween(playerGui.Loading.Desc, {Position = UDim2.fromScale(.5, 1.4)}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(1.21)
+tween(playerGui.Loading.ImageLabel, {Rotation = -120; Size = UDim2.fromScale(0, 0)}, .8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Black'), {BackgroundTransparency = 0}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(.4)
+RunService:UnbindFromRenderStep('Loading')
+camera.CameraType = Enum.CameraType.Custom
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Black'), {BackgroundTransparency = 1}, 1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(1)
+tween(camera, {FieldOfView = 70}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+tween(blur, {Size = 0}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(.4)
 
-    TweenService:Create(playUITitle1, TweenInfo.new(.8, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {TextTransparency = 0}):Play()
-    TweenService:Create(playUITitle2, TweenInfo.new(.8, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {TextTransparency = 0}):Play()
-    task.wait(.8)
-    TweenService:Create(playUITitle2, TweenInfo.new(1.4, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut, -1, true), {TextTransparency = 1}):Play()
-
-    TweenService:Create(playUIBtn, TweenInfo.new(1.1, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {TextTransparency = 0}):Play()
-    task.wait(1.11)
-
-    local tween = TweenService:Create(camera, TweenInfo.new(4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {FieldOfView = 90}) ; tween:Play()
-
-    local play = false
-    playUIBtn.Activated:Connect(function()
-        _G.AllowRotate = true
-        if play then return end ; play = true
-        --playUIBtn.Size = UDim2.fromScale(playUIBtn.Size.X.Scale*.85, playUIBtn.Size.Y.Scale*.85)
-        TweenService:Create(playUIBtn.UIStroke, TweenInfo.new(3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Thickness = 100}):Play()
-        tween:Cancel()
-        TweenService:Create(playUIFrame, TweenInfo.new(.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 0}):Play()
-        task.wait(1)
-        camera.CameraType = Enum.CameraType.Custom
-        playUI:Destroy()
-        frontUI.Enabled = true
-        waitingMenu.Visible = true
-        TweenService:Create(playUIFrame, TweenInfo.new(1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
-        task.wait(1.81)
-        _G.PlayButtonHit = true
-        loadingUI:Destroy()
-        frontUI.Frame.Visible = true
-        script:Destroy()
-    end)
-end ]]
+playerGui:WaitForChild('Loading').Enabled = false

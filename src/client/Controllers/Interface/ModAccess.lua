@@ -58,7 +58,7 @@ function ModAccess:KnitStart()
     self.panel = self.cd(self.ui.ModAccess.Frame.Frame.Mod.Mod.Template.Template)
     self.playerFrame = self.cd(self.ui.ModAccess.Frame.Frame.Mod.Mod.Template)
     self.service.Visible:Connect(function()
-        self.ui.Front.ModAccess.Visible = true
+        --self.ui.Front.ModAccess.Visible = true
         local dragObj = require(game.ReplicatedStorage.Shared.DraggableObject)
         local frameDrag = dragObj.new(self.ui.ModAccess.Frame)
         frameDrag:Enable()
