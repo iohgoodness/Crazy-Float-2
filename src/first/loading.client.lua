@@ -13,6 +13,7 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild('PlayerGui')
 ContentProvider:PreloadAsync({
     playerGui:WaitForChild('Loading');
+    playerGui:WaitForChild('Front');
     playerGui:WaitForChild('Loading'):WaitForChild('Black');
 });
 
@@ -52,8 +53,9 @@ end)
 
 tween(playerGui:WaitForChild('Loading'):WaitForChild('Black'), {BackgroundTransparency = 1}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 task.wait(1)
-tween(playerGui:WaitForChild('Loading'):WaitForChild('Version'), {Position = UDim2.fromScale(0.15, 0.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-tween(playerGui:WaitForChild('Loading'):WaitForChild('Content'), {Position = UDim2.fromScale(0.85, 0.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Version'), {Position = UDim2.fromScale(0.15, 0.5)}, 1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(.4)
+tween(playerGui:WaitForChild('Loading'):WaitForChild('Content'), {Position = UDim2.fromScale(0.85, 0.5)}, 1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 task.wait(.5)
 
 local hiding = false
@@ -84,6 +86,7 @@ task.wait(1+math.random(14, 21)/40)
 
 tween(playerGui.Loading.ImageLabel, {Rotation = 60; Size = UDim2.fromScale(1.8, 1.8)}, 1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 tween(playerGui:WaitForChild('Loading'):WaitForChild('Version'), {Position = UDim2.fromScale(0.15, 1.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+task.wait(.4)
 tween(playerGui:WaitForChild('Loading'):WaitForChild('Content'), {Position = UDim2.fromScale(0.85, -0.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 hiding = true
 t1:Cancel()
@@ -95,6 +98,7 @@ tween(playerGui:WaitForChild('Loading'):WaitForChild('Black'), {BackgroundTransp
 task.wait(.4)
 RunService:UnbindFromRenderStep('Loading')
 camera.CameraType = Enum.CameraType.Custom
+playerGui:WaitForChild('Front').Frame.Visible = true
 tween(playerGui:WaitForChild('Loading'):WaitForChild('Black'), {BackgroundTransparency = 1}, 1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 task.wait(1)
 tween(camera, {FieldOfView = 70}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
