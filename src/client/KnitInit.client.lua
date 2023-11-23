@@ -34,6 +34,7 @@ Knit.btn = function(btn, fn, timer, scale, ignoreRotate)
         if btnDebounce then return end
         btnDebounce = true
         if not btn then return end
+        Knit.GetController('Sound'):LocalSound('Click')
         TweenService:Create(btn.Tab, TweenInfo.new(timer or 0.09, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, true), {Size = UDim2.fromScale(scale or .81, scale or .81)}):Play()
         Thread.Spawn(function() fn() end)
         task.wait(timer and timer+.1 or 0.09+.1)
@@ -47,6 +48,7 @@ local debounce = false
 Knit.toggle = function(uiName, frame, disableDimmer)
     if debounce then return end
     debounce = true
+    Knit.GetController('Sound'):LocalSound('Swoosh')
     luiName, lframe, ldisableDimmer = uiName, frame, disableDimmer
     local inUI = false
     local player = Players.LocalPlayer

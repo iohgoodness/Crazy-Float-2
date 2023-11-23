@@ -219,7 +219,7 @@ function Building:Placing(itemName)
     self.ghostObjectSpringPosition.Damper = .75
     self.ghostObjectSpringRotation.Speed = 15
     self.ghostObjectSpringRotation.Damper = .75
-    self.increment = 1
+    self.increment = .25
     self.allowedGrids = {Players.LocalPlayer.Name}
     self.placeable = false
     self.placingconn = RunService.RenderStepped:Connect(function()

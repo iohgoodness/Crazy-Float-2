@@ -14,6 +14,7 @@ local Levels = Knit.cfg.Levels
 -- cap xp fill to 0.07 min
 
 function Front:UpdateValues(money, gems, xp)
+    Knit.GetController('Sound'):LocalSound('Coins')
     if not money then money = self.lastMoney end
     if not gems then gems = self.lastGems end
     if not xp then xp = self.lastXP end
