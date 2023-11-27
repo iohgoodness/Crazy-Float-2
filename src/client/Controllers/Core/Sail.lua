@@ -5,7 +5,9 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local MarketplaceService = game:GetService("MarketplaceService")
 local Players = game:GetService("Players")
+
 local Knit = require(ReplicatedStorage.Packages.Knit)
+local Thread = require(ReplicatedStorage.Packages.Thread)
 
 local Sail = Knit.CreateController { Name = "Sail" }
 
@@ -32,6 +34,43 @@ function Sail:DisableAll()
     self.tween(self.ui.Sailing.Frame.Options['HP'].Enabled, {TextTransparency = 1})
 end
 
+function Sail:UpdateRoster(roster)
+    -- remove players, log already added
+    local alreadyAdded = {}
+    for index=1, 16 do
+        local frame = self.ui.GameUI.Frame.Tab[index%2==0 and 'Even' or 'Odd']
+        local playerSlot = frame[index]
+        local playerName = playerSlot:GetAttribute('Player')
+        if playerName then
+            if not table.find(roster, playerName) then
+                playerSlot:SetAttribute('Player', nil)
+                Thread.Spawn(function()
+                    self.tween(playerSlot, {ImageTransparency = 1})
+                    task.wait(.21)
+                    playerSlot.Visible = false
+                end)
+            else
+                table.insert(alreadyAdded, playerName)
+            end
+        end
+    end
+    -- any not already added, add
+    for index=1, #roster do
+        local frame = self.ui.GameUI.Frame.Tab[index%2==0 and 'Even' or 'Odd']
+        local playerSlot = frame[index]
+        local playerName = roster[index]
+        if not table.find(alreadyAdded, playerName) and not playerSlot:GetAttribute('Player') then
+            playerSlot:SetAttribute('Player', playerName)
+            local player = Players:FindFirstChild(playerName)
+            playerSlot.Image = Knit.shared.Web.GetHeadshot(player.UserId) or 'rbxassetid://15460201085'
+            playerSlot.Visible = true
+            Thread.Spawn(function()
+                self.tween(playerSlot, {ImageTransparency = 0})
+            end)
+        end
+    end
+end
+
 function Sail:KnitStart()
     local options = self.ui.Sailing.Frame.Options
     self.cycle(options, function(btn)
@@ -53,9 +92,6 @@ function Sail:KnitStart()
             end
         end)
     end)
-    self.btn(self.ui.Sailing.Frame.Frame.Submit, function()
-        self:DisableAll()
-    end)
     self.lastDevproducts = {}
     self.service.Pull:Connect(function(devproducts)
         for option,amount in pairs(devproducts) do
@@ -64,6 +100,41 @@ function Sail:KnitStart()
             end
         end
         self.lastDevproducts = devproducts
+    end)
+    self.service.UpdateGameUI:Connect(function(response)
+        if response.Timer then
+            self.ui.GameUI.Frame.Tab.Frame.TextLabel.Text = `SAILING IN {response.Timer} SECONDS`
+        end
+        if response.Roster then
+            self:UpdateRoster(response.Roster)
+        end
+        if response.TimerWarning then
+            if response.TimerWarning == 10 then
+                self.ui.GameUI.Start.TextLabel.Text = 'SAILING IN 10 SECONDS'
+                self.tween(self.ui.GameUI.Start.TextLabel, {TextTransparency = 0}, 1)
+                task.wait(3)
+                self.tween(self.ui.GameUI.Start.TextLabel, {TextTransparency = 1}, .21)
+            elseif response.TimerWarning~=0 and response.TimerWarning <= 5 then
+                self.ui.GameUI.Start.TextLabel.Text = `{response.TimerWarning}`
+                self.tween(self.ui.GameUI.Start, {BackgroundTransparency = (Knit.shared.Math.Map(response.TimerWarning, 0, 5, 0, 1))}, 1.1)
+                self.tween(self.ui.GameUI.Start.TextLabel, {TextTransparency = 0}, .21)
+            elseif response.TimerWarning == 0 then
+                self.ui.GameUI.Start.TextLabel.Text = 'HERE WE GO!'
+                Knit.GetController('Front'):Hide()
+                task.wait(3)
+                self.tween(self.ui.GameUI.Start, {BackgroundTransparency = 1}, .21)
+                self.tween(self.ui.GameUI.Start.TextLabel, {TextTransparency = 1}, .21)
+            end
+        end
+    end)
+    self.btn(self.ui.GameUI.Frame.Tab.Join, function()
+        self.service:ToggleJoin():andThen(function(response)
+            if response then
+                self.ui.GameUI.Frame.Tab.Join.Tab.TextLabel.Text = 'Leave'
+            else
+                self.ui.GameUI.Frame.Tab.Join.Tab.TextLabel.Text = 'Join'
+            end
+        end)
     end)
 end
 

@@ -78,6 +78,7 @@ function ProfileService:KnitInit()
         };
         Inventory = {
             Blocks = Knit.cfg.Blocks.GetMax(10);
+            --BLocks = {['Wood Square'] = 5};
             Plots = {
                 Plot = {
                     Active = 'Vaporwave';
@@ -96,7 +97,7 @@ function ProfileService:KnitInit()
         Sailing = {
             DevProducts = {
                 HP = 0;
-                Coins = 3;
+                Coins = 0;
                 Gems = 0;
             };
         };

@@ -37,6 +37,7 @@ function Grids:SwapLabel(player, labelName)
     local label = plot.Base:FindFirstChildOfClass('BillboardGui')
     local newLabel = ReplicatedStorage.Assets.UI.Plots.Labels[labelName]:Clone()
     newLabel.Frame.Bar.TextLabel.Text = player.DisplayName
+    newLabel.Head.Bar.Image = Knit.shared.Web.GetHeadshot(player.UserId) or 'rbxassetid://15460201085'
     label:Destroy()
     newLabel.Parent = plot.Base
     Knit.modules.Labels[labelName](newLabel.Frame.Bar.TextLabel)
@@ -54,6 +55,19 @@ function Grids:SwapPlot(player, plotName)
     self:SwapLabel(player, Knit.pd(player).Inventory.Plots.Label.Active)
 end
 
+function Grids:CharacterAdded(character)
+    character.Parent = workspace.Characters
+    character:PivotTo(workspace.Island.Grids[character.Name]:FindFirstChildOfClass('Model').Base.CFrame * CFrame.new(0, 20, 0))
+    local humanoid = character:WaitForChild('Humanoid')
+    if humanoid:GetState() == Enum.HumanoidStateType.Swimming then
+        if not humanoid:GetAttribute('WaterDamage') or humanoid:GetAttribute('WaterDamage')+1>tick() then
+            humanoid:SetAttribute('WaterDamage', tick())
+            humanoid:TakeDamage(1)
+        end
+    end
+    task.wait(1)
+end
+
 function Grids:PlayerAdded(player)
     local pickedGrid
     for _,grid in ipairs(self.backupGrids) do
@@ -69,12 +83,10 @@ function Grids:PlayerAdded(player)
     newGrid.Parent = workspace.Island.Grids
     self:SwapPlot(player, Knit.pd(player).Inventory.Plots.Plot.Active)
     local character = player.Character or player.CharacterAdded:Wait()
-    character:PivotTo(newGrid:FindFirstChildOfClass('Model').Base.CFrame * CFrame.new(0, 20, 0))
-    character.Parent = workspace.Characters
+    self:CharacterAdded(character)
     player.CharacterAdded:Connect(function(character)
-        character.Parent = workspace.Characters
+        self:CharacterAdded(character)
     end)
-    character.Humanoid.WalkSpeed = 40
 end
 
 function Grids:PlayerRemoving(player)

@@ -11,6 +11,8 @@ local Building = Knit.CreateService {
     Client = { },
 }
 
+local BlocksData = Knit.cfg.Blocks
+
 function Building:KnitStart()
     self.GridsService = Knit.GetService('Grids')
 end
@@ -24,6 +26,9 @@ function Building:MakeObject(player,instanceID,instanceName,instanceCFrame)
     instance.Name = instanceID
     instance:SetAttribute('Object', true)
     instance:SetAttribute('ObjectName', instanceName)
+    for key,value in pairs(BlocksData.Blocks[instanceName]) do
+        instance:SetAttribute(key, value)
+    end
     Knit.GetService('Achievements'):Earn(player, 'Architect', 1)
     instance.Parent = grid.Objects
 end

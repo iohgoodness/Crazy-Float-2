@@ -50,12 +50,12 @@ function Building:KnitStart()
                 end)
             end
         elseif input.UserInputType == Enum.UserInputType.Keyboard then
-            if input.KeyCode == Enum.KeyCode.Q then
+            if input.KeyCode == Enum.KeyCode.R then
                 --q = true
                 self.ghostY += 45
             elseif input.KeyCode == Enum.KeyCode.E then
                 --e = true
-                self.ghostY -= 45
+                --self.ghostY -= 45
             elseif input.KeyCode == Enum.KeyCode.C then
                 self:StopPlacing()
             elseif input.KeyCode == Enum.KeyCode.Delete or input.KeyCode == Enum.KeyCode.Backspace then
@@ -66,12 +66,12 @@ function Building:KnitStart()
     UserInputService.InputEnded:Connect(function(input, gp)
         if gp then return end
         if input.UserInputType == Enum.UserInputType.Keyboard then
-           if input.KeyCode == Enum.KeyCode.Q then
+           if input.KeyCode == Enum.KeyCode.R then
                 q = false
                 qt += 1
             elseif input.KeyCode == Enum.KeyCode.E then
-                e = false
-                et += 1
+                --e = false
+                --et += 1
             end
         end
     end)

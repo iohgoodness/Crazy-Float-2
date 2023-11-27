@@ -51,7 +51,7 @@ function Chat:PlayerAdded(player)
 end
 
 function Chat:PlayerRemoving(player)
-    self:Send(`[SYSTEM] {player.Name} left the game.`, Color3.fromRGB(87, 72, 61))
+    self:Send(`[SYSTEM] {player.Name} left the game.`, Color3.fromRGB(253, 143, 129))
 end
 
 return Chat

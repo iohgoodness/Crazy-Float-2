@@ -9,6 +9,8 @@ local TweenService = game:GetService("TweenService")
 local ContentProvider = game:GetService("ContentProvider")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
+if false then
+
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild('PlayerGui')
 ContentProvider:PreloadAsync({
@@ -74,15 +76,15 @@ task.spawn(function()
 end)
 
 tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.2)}, 2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-task.wait(2+math.random(14, 21)/40)
+task.wait(2+math.random(14, 21)/400)
 tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.4)}, 2.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-task.wait(2.2+math.random(14, 21)/40)
+task.wait(2.2+math.random(14, 21)/400)
 tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.5)}, 1.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-task.wait(1.6+math.random(14, 21)/40)
+task.wait(1.6+math.random(14, 21)/400)
 tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-.7)}, 3.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-task.wait(3.2+math.random(14, 21)/40)
+task.wait(3.2+math.random(14, 21)/400)
 tween(playerGui.Loading.ImageLabel.UIGradient, {Offset = Vector2.new(0,-1)}, 1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-task.wait(1+math.random(14, 21)/40)
+task.wait(1+math.random(14, 21)/400)
 
 tween(playerGui.Loading.ImageLabel, {Rotation = 60; Size = UDim2.fromScale(1.8, 1.8)}, 1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 tween(playerGui:WaitForChild('Loading'):WaitForChild('Version'), {Position = UDim2.fromScale(0.15, 1.5)}, 1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
@@ -105,3 +107,8 @@ tween(blur, {Size = 0}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 task.wait(.4)
 
 playerGui:WaitForChild('Loading').Enabled = false
+
+else
+    local playerGui = Players.LocalPlayer:WaitForChild('PlayerGui')
+    playerGui:WaitForChild('Front').Frame.Visible = true
+end
