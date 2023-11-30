@@ -58,8 +58,8 @@ function Boat.new(player,cframe)
             weld.Part1 = part
             weld.Parent = part
             part.Anchored = false
-            local DENSITY = 0
-            local FRICTION = 0.1
+            local DENSITY = .1
+            local FRICTION = 1
             local ELASTICITY = 1
             local FRICTION_WEIGHT = 1
             local ELASTICITY_WEIGHT = 1

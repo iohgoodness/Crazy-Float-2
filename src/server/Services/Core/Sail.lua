@@ -95,10 +95,9 @@ function Sail:Running()
             character:PivotTo(self.boats[player].Boat:GetPivot())
         end
         -- start sailing
-
         self.decayBootsConnection = Thread.DelayRepeat(1, function()
             for player,boat in pairs(self.boats) do
-                boat.DecayBoat(1)
+                boat.DecayBoat(.5)
             end
         end)
 

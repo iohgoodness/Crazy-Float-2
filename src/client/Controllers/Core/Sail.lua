@@ -120,10 +120,13 @@ function Sail:KnitStart()
                 self.tween(self.ui.GameUI.Start.TextLabel, {TextTransparency = 0}, .21)
             elseif response.TimerWarning == 0 then
                 self.ui.GameUI.Start.TextLabel.Text = 'HERE WE GO!'
-                Knit.GetController('Front'):Hide()
+                Knit.GetController('Front'):Hide() 
                 task.wait(3)
                 self.tween(self.ui.GameUI.Start, {BackgroundTransparency = 1}, .21)
                 self.tween(self.ui.GameUI.Start.TextLabel, {TextTransparency = 1}, .21)
+                self.ui.GameUI.Frame.Visible = false
+                Knit.GetController('Building'):StopPlacing()
+                self.ui.GameUI.Frame.Tab.Frame.TextLabel.Text = `SAILING IN PROGRESS`
             end
         end
     end)

@@ -3,6 +3,7 @@
 -- Description // Grid Service
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local Thread = require(ReplicatedStorage.Packages.Thread)
@@ -58,14 +59,42 @@ end
 function Grids:CharacterAdded(character)
     character.Parent = workspace.Characters
     character:PivotTo(workspace.Island.Grids[character.Name]:FindFirstChildOfClass('Model').Base.CFrame * CFrame.new(0, 20, 0))
-    local humanoid = character:WaitForChild('Humanoid')
-    if humanoid:GetState() == Enum.HumanoidStateType.Swimming then
-        if not humanoid:GetAttribute('WaterDamage') or humanoid:GetAttribute('WaterDamage')+1>tick() then
-            humanoid:SetAttribute('WaterDamage', tick())
-            humanoid:TakeDamage(1)
+    local Humanoid = character:WaitForChild('Humanoid')
+    local hp = ReplicatedStorage.Assets.UI.Hp:Clone()
+    hp.Parent = character.Head
+    local cf, size = character:GetBoundingBox()
+    local Swimming = false
+    Humanoid.StateChanged:Connect(function (oldState, newState)
+        if newState == Enum.HumanoidStateType.Swimming then
+            Swimming = true
+        elseif oldState == Enum.HumanoidStateType.Swimming and newState ~= Enum.HumanoidStateType.Jumping then
+            Swimming = false
+        elseif oldState ~= Enum.HumanoidStateType.Swimming and oldState ~= newState then
+            Swimming = false
         end
-    end
-    task.wait(1)
+    end)
+    Thread.Spawn(function()
+        while task.wait(1) do
+            if not Swimming then continue end
+            Humanoid:TakeDamage(5)
+        end
+    end)
+    hp.Outer.BackgroundTransparency = 1
+    hp.Outer.Inner.BackgroundTransparency = 1
+    hp.Outer.Inner.Size = UDim2.fromScale(math.clamp(Humanoid.Health / Humanoid.MaxHealth, 0, Humanoid.MaxHealth),1)
+    Humanoid:GetPropertyChangedSignal('Health'):Connect(function()
+        if hp.Outer.BackgroundTransparency >= 1 and Humanoid.Health < Humanoid.MaxHealth then
+            TweenService:Create(hp.Outer, TweenInfo.new(.41, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 0.6}):Play()
+            TweenService:Create(hp.Outer.Inner, TweenInfo.new(.41, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 0}):Play()
+            task.wait(.11)
+            TweenService:Create(hp.Outer.Inner, TweenInfo.new(.21, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.fromScale(math.clamp(Humanoid.Health / Humanoid.MaxHealth, 0, Humanoid.MaxHealth),1)}):Play()
+        elseif Humanoid.Health >= Humanoid.MaxHealth then
+            TweenService:Create(hp.Outer, TweenInfo.new(.41, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
+            TweenService:Create(hp.Outer.Inner, TweenInfo.new(.41, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {BackgroundTransparency = 1}):Play()
+        else
+            TweenService:Create(hp.Outer.Inner, TweenInfo.new(.21, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Size = UDim2.fromScale(math.clamp(Humanoid.Health / Humanoid.MaxHealth, 0, Humanoid.MaxHealth),1)}):Play()
+        end
+    end)
 end
 
 function Grids:PlayerAdded(player)

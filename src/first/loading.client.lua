@@ -9,15 +9,22 @@ local TweenService = game:GetService("TweenService")
 local ContentProvider = game:GetService("ContentProvider")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
-if false then
-
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild('PlayerGui')
-ContentProvider:PreloadAsync({
+local StarterGui = game:GetService("StarterGui")
+
+if false then
+
+
+    ContentProvider:PreloadAsync({
     playerGui:WaitForChild('Loading');
     playerGui:WaitForChild('Front');
     playerGui:WaitForChild('Loading'):WaitForChild('Black');
 });
+
+playerGui:WaitForChild('Front').Frame.Visible = false
+playerGui:WaitForChild('Front').ModAccess.Visible = false
+playerGui:WaitForChild('GameUI').Frame.Visible = false
 
 playerGui:WaitForChild('Loading'):WaitForChild('Black').BackgroundTransparency = 0
 playerGui:WaitForChild('Loading'):WaitForChild('Version').Position = UDim2.fromScale(0.15, -.5)
@@ -100,6 +107,9 @@ task.wait(.4)
 RunService:UnbindFromRenderStep('Loading')
 camera.CameraType = Enum.CameraType.Custom
 playerGui:WaitForChild('Front').Frame.Visible = true
+playerGui:WaitForChild('Front').ModAccess.Visible = true
+playerGui:WaitForChild('GameUI').Frame.Visible = true
+
 tween(playerGui:WaitForChild('Loading'):WaitForChild('Black'), {BackgroundTransparency = 1}, 1.8, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 task.wait(1)
 tween(camera, {FieldOfView = 70}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
@@ -107,8 +117,11 @@ tween(blur, {Size = 0}, .4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 task.wait(.4)
 
 playerGui:WaitForChild('Loading').Enabled = false
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
 
 else
-    local playerGui = Players.LocalPlayer:WaitForChild('PlayerGui')
     playerGui:WaitForChild('Front').Frame.Visible = true
+    playerGui:WaitForChild('Front').ModAccess.Visible = true
+    playerGui:WaitForChild('GameUI').Frame.Visible = true
+    StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Health, false)
 end
