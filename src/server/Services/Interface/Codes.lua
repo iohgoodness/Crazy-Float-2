@@ -6,9 +6,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
+print(Knit)
+
 local Codes = Knit.CreateService {
     Name = "Codes",
-    Client = {},
+    Client = {
+        TestRemote = Knit.CreateUSignal();
+    },
 }
 
 local CodesData = require(ServerStorage.Private.Codes)
@@ -37,7 +41,9 @@ function Codes.Client:SubmitCode(player, code)
 end
 
 function Codes:KnitStart()
-    
+    --[[ self.Client.TestRemote:Connect(function(player)
+        print(player)
+    end) ]]
 end
 
 return Codes

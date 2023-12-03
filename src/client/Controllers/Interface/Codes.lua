@@ -21,6 +21,13 @@ function Codes:KnitStart()
             self.txtswap(self.ui.Codes.Frame.Frame.Frame.Tab, response, '')
         end)
     end)
+
+    --[[ task.spawn(function()
+        while task.wait(1) do
+            print(self.service.TestRemote)
+            self.service.TestRemote:Fire()
+        end
+    end) ]]
 end
 
 return Codes

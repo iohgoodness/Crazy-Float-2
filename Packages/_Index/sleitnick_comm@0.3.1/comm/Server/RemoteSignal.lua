@@ -26,10 +26,11 @@ function RemoteSignal.new(
 	parent: Instance,
 	name: string,
 	inboundMiddleware: Types.ServerMiddleware?,
-	outboundMiddleware: Types.ServerMiddleware?
+	outboundMiddleware: Types.ServerMiddleware?,
+	unreliable: boolean?
 )
 	local self = setmetatable({}, RemoteSignal)
-	self._re = Instance.new("RemoteEvent")
+	self._re = if not unreliable then Instance.new("RemoteEvent") else Instance.new("UnreliableRemoteEvent")
 	self._re.Name = name
 	self._re.Parent = parent
 	if outboundMiddleware and #outboundMiddleware > 0 then

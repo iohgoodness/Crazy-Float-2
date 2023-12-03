@@ -124,6 +124,11 @@ getmetatable(SIGNAL_MARKER).__tostring = function()
 	return "SIGNAL_MARKER"
 end
 
+local U_SIGNAL_MARKER = newproxy(true)
+getmetatable(U_SIGNAL_MARKER).__tostring = function()
+	return "U_SIGNAL_MARKER"
+end
+
 local PROPERTY_MARKER = newproxy(true)
 getmetatable(PROPERTY_MARKER).__tostring = function()
 	return "PROPERTY_MARKER"
@@ -262,6 +267,10 @@ function KnitServer.CreateSignal()
 	return SIGNAL_MARKER
 end
 
+function KnitServer.CreateUSignal()
+	return U_SIGNAL_MARKER
+end
+
 --[=[
 	@return PROPERTY_MARKER
 	Returns a marker that will transform the current key into
@@ -362,6 +371,8 @@ function KnitServer.Start(options: KnitOptions?)
 					service.KnitComm:WrapMethod(service.Client, k, inbound, outbound)
 				elseif v == SIGNAL_MARKER then
 					service.Client[k] = service.KnitComm:CreateSignal(k, inbound, outbound)
+				elseif v == U_SIGNAL_MARKER then
+					service.Client[k] = service.KnitComm:CreateUSignal(k, inbound, outbound)
 				elseif type(v) == "table" and v[1] == PROPERTY_MARKER then
 					service.Client[k] = service.KnitComm:CreateProperty(k, v[2], inbound, outbound)
 				end

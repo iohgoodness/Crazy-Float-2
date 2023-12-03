@@ -123,6 +123,18 @@ function Server.CreateSignal(
 	return rs
 end
 
+function Server.CreateUSignal(
+	parent: Instance,
+	name: string,
+	inboundMiddleware: Types.ServerMiddleware?,
+	outboundMiddleware: Types.ServerMiddleware?
+)
+	assert(Util.IsServer, "CreateUSignal must be called from the server")
+	local folder = Util.GetCommSubFolder(parent, "RE"):Expect("Failed to get Comm RE folder")
+	local rs = RemoteSignal.new(folder, name, inboundMiddleware, outboundMiddleware, true)
+	return rs
+end
+
 function Server.CreateProperty(
 	parent: Instance,
 	name: string,
