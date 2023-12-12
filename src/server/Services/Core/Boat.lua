@@ -14,6 +14,10 @@ local Boat = Knit.CreateService {
 
 local Hp = ReplicatedStorage.Assets.Physical.Misc.Hp
 
+function Boat:Replicate()
+
+end
+
 function Boat.new(player,cframe)
     local self = setmetatable({}, Boat)
 
@@ -110,11 +114,11 @@ function Boat.new(player,cframe)
         boat.Parent = workspace.Generation.Boats
         boat:PivotTo(cframe)
 
-        local vectorForce = Instance.new('VectorForce')
+        --[[ local vectorForce = Instance.new('VectorForce')
         vectorForce.RelativeTo = Enum.ActuatorRelativeTo.World
         vectorForce.Force = Vector3.new(0, 0, -850)
         vectorForce.Attachment0 = rootAttachment
-        vectorForce.Parent = rootPart
+        vectorForce.Parent = rootPart ]]
 
         self.rootPart = rootPart
         self.rootAttachment = rootAttachment

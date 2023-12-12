@@ -6,8 +6,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local Knit = require(ReplicatedStorage.Packages.Knit)
 
-print(Knit)
-
 local Codes = Knit.CreateService {
     Name = "Codes",
     Client = {

@@ -21,7 +21,7 @@ local btnDebounce = false
 Knit.btn = function(btn, fn, timer, scale, ignoreRotate)
     if not btn:GetAttribute('sx') and not btn:GetAttribute('sy') then btn:SetAttribute('sx', btn.Size.X.Scale) btn:SetAttribute('sy', btn.Size.Y.Scale) end
     if not btn.Tab:GetAttribute('sx') and not btn.Tab:GetAttribute('sy') then btn.Tab:SetAttribute('sx', btn.Tab.Size.X.Scale) btn.Tab:SetAttribute('sy', btn.Tab.Size.Y.Scale) end
-    local MouseEnter, MouseLeave = Knit.Shared.Hover.MouseEnterLeaveEvent(btn)
+    local MouseEnter, MouseLeave = Knit.Shared.Hover.MouseEnterLeaveEvent(btn) 
     MouseEnter:Connect(function()
         --TweenService:Create(btn.Tab, TweenInfo.new(0.21, Enum.EasingStyle.Cubic, Enum.EasingDirection.InOut), {Rotation = 3}):Play()
         TweenService:Create(btn.Tab, TweenInfo.new(timer or 0.09, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Size = UDim2.fromScale(btn.Tab:GetAttribute('sx')*.91, btn.Tab:GetAttribute('sy')*.91)}):Play()

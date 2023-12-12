@@ -20,6 +20,7 @@ end
 function Grids:KnitInit()
     self.gridsDir = workspace.Island.Grids
     self.backupGrids = {}
+    self.playerThreads = {}
     self.gridsInUse = {}
     for i,v in pairs(self.gridsDir:GetChildren()) do
         v.Name = i
@@ -56,7 +57,7 @@ function Grids:SwapPlot(player, plotName)
     self:SwapLabel(player, Knit.pd(player).Inventory.Plots.Label.Active)
 end
 
-function Grids:CharacterAdded(character)
+function Grids:CharacterAdded(player, character)
     character.Parent = workspace.Characters
     character:PivotTo(workspace.Island.Grids[character.Name]:FindFirstChildOfClass('Model').Base.CFrame * CFrame.new(0, 20, 0))
     local Humanoid = character:WaitForChild('Humanoid')
@@ -73,7 +74,7 @@ function Grids:CharacterAdded(character)
             Swimming = false
         end
     end)
-    Thread.Spawn(function()
+    self.playerThreads[player]['WaterDamage'] = Thread.Spawn(function()
         while task.wait(1) do
             if not Swimming then continue end
             Humanoid:TakeDamage(5)
@@ -98,6 +99,7 @@ function Grids:CharacterAdded(character)
 end
 
 function Grids:PlayerAdded(player)
+    self.playerThreads[player] = {}
     local pickedGrid
     for _,grid in ipairs(self.backupGrids) do
         if not table.find(self.gridsInUse, grid.Name) then
@@ -112,13 +114,19 @@ function Grids:PlayerAdded(player)
     newGrid.Parent = workspace.Island.Grids
     self:SwapPlot(player, Knit.pd(player).Inventory.Plots.Plot.Active)
     local character = player.Character or player.CharacterAdded:Wait()
-    self:CharacterAdded(character)
+    self:CharacterAdded(player, character)
     player.CharacterAdded:Connect(function(character)
-        self:CharacterAdded(character)
+        repeat task.wait() until character.Parent ~= nil
+        self:CharacterAdded(player, character)
     end)
 end
 
 function Grids:PlayerRemoving(player)
+    for _,thread in ipairs(self.playerThreads[player]) do
+        pcall(function() thread:Disconnect() end)
+        thread = nil
+    end
+    self.playerThreads[player] = nil
     local gridName = player:GetAttribute('Grid')
     local gridIndex = table.find(self.gridsInUse, gridName)
     if gridIndex then
