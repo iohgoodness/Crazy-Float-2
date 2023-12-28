@@ -5,11 +5,36 @@ registry = "test"
 [[package]]
 name = "adox/forever-obby"
 version = "0.1.0"
-dependencies = [["Knit", "sleitnick/knit@1.5.1"]]
+dependencies = [["Janitor", "howmanysmall/janitor@1.15.7"], ["Knit", "sleitnick/knit@1.5.1"], ["Red", "red-blox/red@2.1.1"]]
 
 [[package]]
 name = "evaera/promise"
 version = "4.0.0"
+dependencies = []
+
+[[package]]
+name = "howmanysmall/janitor"
+version = "1.15.7"
+dependencies = [["Promise", "evaera/promise@4.0.0"]]
+
+[[package]]
+name = "red-blox/future"
+version = "1.0.1"
+dependencies = [["Spawn", "red-blox/spawn@1.0.0"]]
+
+[[package]]
+name = "red-blox/guard"
+version = "1.0.1"
+dependencies = []
+
+[[package]]
+name = "red-blox/red"
+version = "2.1.1"
+dependencies = [["Future", "red-blox/future@1.0.1"], ["Guard", "red-blox/guard@1.0.1"], ["Spawn", "red-blox/spawn@1.0.0"]]
+
+[[package]]
+name = "red-blox/spawn"
+version = "1.0.0"
 dependencies = []
 
 [[package]]

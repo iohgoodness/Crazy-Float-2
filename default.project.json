@@ -9,6 +9,9 @@
       },
       "Shared": {
         "$path": "src/shared"
+      },
+      "Events": {
+        "$path": "src/events"
       }
     },
 

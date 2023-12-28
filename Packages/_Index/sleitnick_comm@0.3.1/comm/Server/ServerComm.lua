@@ -146,14 +146,6 @@ function ServerComm:CreateSignal(
 	return Comm.CreateSignal(self._instancesFolder, name, inboundMiddleware, outboundMiddleware)
 end
 
-function ServerComm:CreateUSignal(
-	name: string,
-	inboundMiddleware: Types.ServerMiddleware?,
-	outboundMiddleware: Types.ServerMiddleware?
-)
-	return Comm.CreateUSignal(self._instancesFolder, name, inboundMiddleware, outboundMiddleware)
-end
-
 --[=[
 	@param name string
 	@param initialValue any

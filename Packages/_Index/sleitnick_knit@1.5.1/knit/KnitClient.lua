@@ -148,7 +148,7 @@ local function BuildService(serviceName: string)
 	local clientComm = ClientComm.new(folder, selectedOptions.ServicePromises, serviceName)
 	local service = clientComm:BuildObject(middleware.Inbound, middleware.Outbound)
 	services[serviceName] = service
-	return service or {}
+	return service
 end
 
 --[=[
@@ -353,13 +353,6 @@ function KnitClient.Start(options: KnitOptions?)
 			if type(controller.KnitStart) == "function" then
 				task.spawn(function()
 					debug.setmemorycategory(controller.Name)
-					task.spawn(function()
-						pcall(function()
-							if KnitClient and KnitClient.GetService and KnitClient.GetService(controller.Name) then
-								controller.service = KnitClient.GetService(controller.Name)
-							end
-						end)
-					end)
 					controller:KnitStart()
 				end)
 			end

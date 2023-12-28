@@ -207,7 +207,7 @@ function ClientComm:BuildObject(inboundMiddleware: Types.ClientMiddleware?, outb
 	end
 	if reFolder then
 		for _, re in ipairs(reFolder:GetChildren()) do
-			if not re:IsA("RemoteEvent") and not re:IsA("UnreliableRemoteEvent") then
+			if not re:IsA("RemoteEvent") then
 				continue
 			end
 			obj[re.Name] = self:GetSignal(re.Name, inboundMiddleware, outboundMiddleware)
@@ -215,7 +215,7 @@ function ClientComm:BuildObject(inboundMiddleware: Types.ClientMiddleware?, outb
 	end
 	if rpFolder then
 		for _, re in ipairs(rpFolder:GetChildren()) do
-			if not re:IsA("RemoteEvent") and not re:IsA("UnreliableRemoteEvent") then
+			if not re:IsA("RemoteEvent") then
 				continue
 			end
 			obj[re.Name] = self:GetProperty(re.Name, inboundMiddleware, outboundMiddleware)
