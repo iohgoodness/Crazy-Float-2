@@ -3,25 +3,20 @@ local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
 local UI = ReplicatedFirst:WaitForChild("UI")
 
-local UserFeedback = require(ReplicatedStorage.Events.Feedback.UserFeedback):Client()
+local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
+local Interface = require(ReplicatedStorage.Packages.Interface)
 
-local Default = require(script.Parent:WaitForChild("Template"):WaitForChild("Default"))
+local UserFeedback = require(ReplicatedStorage.Events.Feedback.UserFeedback):Client()
 
 local Feedback = {}
 Feedback.__index = Feedback
 
-function Feedback.new()
-    local self = setmetatable(Default, Feedback)
-
-    local existingUI = self.playerGui:FindFirstChild("Feedback")
-    if existingUI then
-        self:Toggle(existingUI.Name)
-        self:Destroy()
-    end
+function Feedback.new(uiName, data)
+    local self = setmetatable({}, Feedback)
 
     self.player = game.Players.LocalPlayer
     self.playerGui = self.player.PlayerGui
-    self.gui = UI:WaitForChild("Feedback"):Clone()
+    self.gui = UI:WaitForChild(uiName):Clone()
     self.gui.Enabled = false
     self.gui.Parent = self.playerGui
 
@@ -44,7 +39,7 @@ function Feedback.new()
         end
     end)
 
-    self:Button(self.playerGui.Feedback.Frame.Background.Send, function()
+    Interface.Button(self.playerGui.Feedback.Frame.Background.Send, function()
         local amount = textbox.Text:len()
         if amount < self.min then
             return
@@ -52,26 +47,34 @@ function Feedback.new()
             return
         end
         UserFeedback:Fire(textbox.Text)
+        Interface.Popup("Okay", {
+            Message = string.upper("Thank you for submitting your feedback! Your opinion will be taken into consideration and our team will try our best to implement them into future updates to make experiences more enjoyable for everyone!");
+        });
+        Knit.openui[uiName]:Destroy()
+        Knit.openui[uiName] = nil
     end)
 
     for _,v in pairs(self.gui:GetDescendants()) do
         if v:IsA("ImageButton") and v.Name == "X" then
-            self:Button(v, function()
+            Interface.Button(v, function()
                 task.wait(0.08)
-                self:Toggle()
-                self:Destroy()
+                Knit.openui[uiName]:Destroy()
+                Knit.openui[uiName] = nil
             end)
             break
         end
     end
 
-    self:Toggle()
+    Interface.Toggle(self.gui)
 
     return self
 end
 
 function Feedback:Destroy()
+    if self.gui then Interface.Toggle(self.gui) end
+    task.wait(.29)
     self.gui:Destroy()
+    self = nil
 end
 
 return Feedback

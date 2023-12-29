@@ -11,8 +11,6 @@ local Interface = require(ReplicatedStorage.Packages.Interface)
 
 local UpdateCurrency = require(ReplicatedStorage.Events.Front.UpdateCurrency):Client()
 
-local Default = require(script.Parent:WaitForChild("Template"):WaitForChild("Default"))
-
 local Front = {}
 Front.__index = Front
 
@@ -33,13 +31,64 @@ function Front:CharacterAdded(character)
 end
 
 function Front:MenuButtons()
-    self:Button(self.playerGui.Front.Frame.Frame.Feedback, function()
-        self.feedbackUI = Knit.spawnui("Feedback")
+    local menu = self.playerGui.Front.Frame.Frame.Menu
+    for _,v in pairs(self.playerGui.Front.Frame.Frame:GetChildren()) do
+        if v.Name == "Menu" then continue end
+        v:SetAttribute("px", v.Position.X.Scale)
+        v:SetAttribute("py", v.Position.Y.Scale)
+        v.Position = menu.Position
+        v.Visible = false
+        v.ImageTransparency = 1
+    end
+    self.playerGui.Front.Frame.Frame.Visible = true
+    self.playerGui.Front.Frame.Frame.ImageTransparency = 1
+    Interface.Button(self.playerGui.Front.Frame.Frame.Menu, function()
+        if not self.menuOpen then
+            self.playerGui.Front.Frame.Frame.Visible = true
+            Interface.Tween(self.playerGui.Front.Frame.Frame, {
+                ImageTransparency = 0
+            }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            for _,v in pairs(self.playerGui.Front.Frame.Frame:GetChildren()) do
+                if v.Name == "Menu" then continue end
+                v.Visible = true
+                Interface.Tween(v, {
+                    Position = UDim2.fromScale(v:GetAttribute("px"), v:GetAttribute("py")),
+                    ImageTransparency = 0
+                }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                task.wait(.08)
+            end
+            task.wait(0.35)
+            self.menuOpen = true
+        else
+            Interface.Tween(self.playerGui.Front.Frame.Frame, {
+                ImageTransparency = 1
+            }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            for _,v in pairs(self.playerGui.Front.Frame.Frame:GetChildren()) do
+                if v.Name == "Menu" then continue end
+                Interface.Tween(v, {
+                    Position = menu.Position,
+                    ImageTransparency = 1
+                }, 0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+                task.delay(0.35, function()
+                    v.Visible = false
+                end)
+            end
+            task.wait(0.35)
+            self.menuOpen = false
+        end
+    end)
+    Interface.Button(self.playerGui.Front.Frame.Frame.Feedback, function()
+        if not self.menuOpen then return end
+        Knit.toggle("Feedback")
+    end)
+    Interface.Button(self.playerGui.Front.Frame.Frame.Quests, function()
+        if not self.menuOpen then return end
+        Knit.toggle("Quests")
     end)
 end
 
 function Front.new()
-    local self = setmetatable(Default, Front)
+    local self = setmetatable({}, Front)
 
     self.janitor = Janitor.new()
 
@@ -48,6 +97,8 @@ function Front.new()
 
     self.gui = UI:WaitForChild("Front"):Clone()
     self.gui.Parent = self.playerGui
+
+    self.menuOpen = false
 
     UpdateCurrency:On(function(coins, gems, xp, level)
         self.playerGui.Front.Frame.Money.TextLabel.Text = Math.Commas(coins)
