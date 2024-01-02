@@ -75,8 +75,9 @@ function Interface.Toggle(gui, frameName)
     frame:SetAttribute("Transitioning", nil)
 end
 
-function Interface.Button(button, callback)
+function Interface.Button(button, callback, ignoreCallback)
     button.MouseButton1Click:Connect(function()
+        if ignoreCallback and ignoreCallback() then return end
         if button:GetAttribute("InUse") then return end
         button:SetAttribute("InUse", true)
         Interface.Tween(button, {
@@ -84,6 +85,21 @@ function Interface.Button(button, callback)
         }, 0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out, 0, true)
         callback()
         button:SetAttribute("InUse", nil)
+    end)
+end
+
+function Interface.XButton(gui, uiName)
+    task.spawn(function()
+        for _,v in pairs(gui:GetDescendants()) do
+            if v:IsA("ImageButton") and v.Name == "X" then
+                Interface.Button(v, function()
+                    task.wait(0.08)
+                    Knit.openui[uiName]:Destroy()
+                    Knit.openui[uiName] = nil
+                end)
+                break
+            end
+        end
     end)
 end
 

@@ -54,16 +54,7 @@ function Feedback.new(uiName, data)
         Knit.openui[uiName] = nil
     end)
 
-    for _,v in pairs(self.gui:GetDescendants()) do
-        if v:IsA("ImageButton") and v.Name == "X" then
-            Interface.Button(v, function()
-                task.wait(0.08)
-                Knit.openui[uiName]:Destroy()
-                Knit.openui[uiName] = nil
-            end)
-            break
-        end
-    end
+    Interface.XButton(self.gui, uiName)
 
     Interface.Toggle(self.gui)
 

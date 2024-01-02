@@ -11,8 +11,24 @@ local Quests = Knit.CreateService {
     Name = "Quests";
 }
 
-function Quests:Reload()
-
+function Quests:Reload(player, questType, amount)
+    local questData = {}
+    local indexes = {}
+    while #indexes < amount do
+        local index = math.random(1, #Data[questType])
+        if not table.find(indexes, index) then
+            table.insert(indexes, index)
+        end
+    end
+    for i=1, #indexes do
+        local index = indexes[i]
+        local dataset = Data[questType][index]
+        dataset.Value = 0
+        dataset.Goal = math.random(dataset.Amount[1], dataset.Amount[2])
+        table.insert(questData, dataset)
+    end
+    Knit.pd(player).Quests[questType] = questData
+    return questData
 end
 
 function Quests:KnitStart()
@@ -27,16 +43,9 @@ function Quests:KnitStart()
             return data.Quests[questType]
         else
             -- generate new quests
-            local questData = {}
-            for _,dataset in ipairs(Data[questType]) do
-                dataset.Value = 0
-                dataset.Goal = math.random(dataset.Amount[1], dataset.Amount[2])
-                table.insert(questData, dataset)
-            end
-            Knit.pd(player).Quests[questType] = questData
-            return questData
+            return self:Reload(player, questType, 5)
         end
-    end) 
+    end)
 end
 
 return Quests

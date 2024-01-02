@@ -16,12 +16,12 @@ Quests.__index = Quests
 function Quests:LoadQuests(questType)
     if self.loading then return end
     self.loading = true
+    local questData = LoadQuests:Call(questType):Await()
     for _,v in pairs(self.playerGui.Quests.Frame.ScrollingFrame:GetChildren()) do
         if v:IsA("Frame") then
             v:Destroy()
         end
     end
-    local questData = LoadQuests:Call(questType):Await()
     for index,data in ipairs(questData) do
         local quest = self.questTemplate:Clone()
         quest.Coins.Text = Math.Commas(data.Reward.Coins)
@@ -43,7 +43,7 @@ function Quests:UpdateQuest(questType, index, progress)
     quest.Choose.Progress = `{progress}/{goal}`
 end
 
-function Quests.new(uiName : string, _)
+function Quests.new(uiName)
     local self = setmetatable({}, Quests)
 
     self.player = game.Players.LocalPlayer
@@ -70,16 +70,7 @@ function Quests.new(uiName : string, _)
         end)
     end
 
-    for _,v in pairs(self.gui:GetDescendants()) do
-        if v:IsA("ImageButton") and v.Name == "X" then
-            Interface.Button(v, function()
-                task.wait(0.08)
-                Knit.openui[uiName]:Destroy()
-                Knit.openui[uiName] = nil
-            end)
-            break
-        end
-    end
+    Interface.XButton(self.gui, uiName)
 
     Interface.Toggle(self.gui)
 

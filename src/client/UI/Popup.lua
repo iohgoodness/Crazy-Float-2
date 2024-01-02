@@ -27,10 +27,10 @@ function Popup.new(uiName, data)
 
     if self.popupType == "Okay" then
         Interface.Button(self.okay, function()
+            Interface.Blur(0)
             task.wait(0.08)
             Knit.openui[uiName]:Destroy()
             Knit.openui[uiName] = nil
-            Interface.Blur(0)
         end)
     end
 

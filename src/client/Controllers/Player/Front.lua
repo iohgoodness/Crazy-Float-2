@@ -6,6 +6,7 @@ local Front = Knit.CreateController { Name = "Front" }
 function Front:KnitStart()
     self.frontUI = Knit.spawn("Front")
     --self.q = Knit.spawn("Quests")
+    self.inventory = Knit.toggle("Inventory")
 end
 
 return Front
