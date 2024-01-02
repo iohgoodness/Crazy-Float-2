@@ -1,12 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
-local TweenService = game:GetService("TweenService")
 
-local UI = ReplicatedFirst:WaitForChild("UI")
-
-local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
 local Interface = require(ReplicatedStorage.Packages.Interface)
-local Math = require(ReplicatedStorage.Packages.Math)
 
 --[[ local LoadInventory = require(ReplicatedStorage.Events.Inventory.LoadInventory)
 local UpdateInventory = require(ReplicatedStorage.Events.Inventory.UpdateInventory):Client() ]]
@@ -33,11 +28,8 @@ end
 function Inventory.new(uiName)
     local self = setmetatable({}, Inventory)
 
-    self.player = game.Players.LocalPlayer
-    self.playerGui = self.player.PlayerGui
-    self.gui = UI:WaitForChild(uiName):Clone()
-    self.gui.Enabled = false
-    self.gui.Parent = self.playerGui
+    Interface.Setup(self, uiName)
+    Interface.XButton(self.gui, uiName)
 
     for _,v in pairs(self.playerGui.Inventory.Frame.Buttons:GetChildren()) do
         if v:IsA("ImageButton") then
@@ -46,8 +38,6 @@ function Inventory.new(uiName)
             end, function() return (self.currentCategory == v.Name) end)
         end
     end
-
-    Interface.XButton(self.gui, uiName)
 
     self.currentCategory = "Blocks"
     self:ChangeCategory("Blocks")

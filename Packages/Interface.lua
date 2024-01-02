@@ -103,4 +103,20 @@ function Interface.XButton(gui, uiName)
     end)
 end
 
+function Interface.CloneDestroy(ref)
+    local clone = ref:Clone()
+    ref:Destroy()
+    return clone
+end
+
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
+local UI = ReplicatedFirst:WaitForChild("UI")
+function Interface.Setup(self, uiName, enabled)
+    self.player = game.Players.LocalPlayer
+    self.playerGui = self.player.PlayerGui
+    self.gui = UI:WaitForChild(uiName):Clone()
+    self.gui.Enabled = ((enabled == nil) and false or true)
+    self.gui.Parent = self.playerGui
+end
+
 return Interface

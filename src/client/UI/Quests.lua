@@ -1,10 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local TweenService = game:GetService("TweenService")
 
-local UI = ReplicatedFirst:WaitForChild("UI")
-
-local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
 local Interface = require(ReplicatedStorage.Packages.Interface)
 local Math = require(ReplicatedStorage.Packages.Math)
 local LoadQuests = require(ReplicatedStorage.Events.Quests.LoadQuests)
@@ -46,13 +42,10 @@ end
 function Quests.new(uiName)
     local self = setmetatable({}, Quests)
 
-    self.player = game.Players.LocalPlayer
-    self.playerGui = self.player.PlayerGui
-    self.gui = UI:WaitForChild(uiName):Clone()
-    self.gui.Enabled = false
-    self.gui.Parent = self.playerGui
-    self.questTemplate = self.playerGui.Quests.Frame.ScrollingFrame.Template:Clone()
-    self.playerGui.Quests.Frame.ScrollingFrame.Template:Destroy()
+    Interface.Setup(self, uiName)
+    Interface.XButton(self.gui, uiName)
+
+    self.questTemplate = Interface.CloneDestroy(self.playerGui.Quests.Frame.ScrollingFrame.Template)
     self.selectedQuestType = "Day"
 
     for _,v in pairs({"Day", "Week", "Month"}) do
@@ -70,10 +63,7 @@ function Quests.new(uiName)
         end)
     end
 
-    Interface.XButton(self.gui, uiName)
-
     Interface.Toggle(self.gui)
-
     self:LoadQuests("Day")
 
     return self

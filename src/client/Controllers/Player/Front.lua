@@ -4,9 +4,10 @@ local Knit = require(ReplicatedStorage.Packages.Knit)
 local Front = Knit.CreateController { Name = "Front" }
 
 function Front:KnitStart()
+    print 'front start'
     self.frontUI = Knit.spawn("Front")
-    --self.q = Knit.spawn("Quests")
-    self.inventory = Knit.toggle("Inventory")
+    --self.s = Knit.spawn("Shop")
+    --self.inventory = Knit.toggle("Inventory")
 end
 
 return Front

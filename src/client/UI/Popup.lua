@@ -1,7 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ReplicatedFirst = game:GetService("ReplicatedFirst")
-
-local UI = ReplicatedFirst:WaitForChild("UI")
 
 local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
 local Interface = require(ReplicatedStorage.Packages.Interface)
@@ -12,15 +9,12 @@ Popup.__index = Popup
 function Popup.new(uiName, data)
     local self = setmetatable({}, Popup)
 
-    self.player = game.Players.LocalPlayer
-    self.playerGui = self.player.PlayerGui
+    Interface.Setup(self, uiName)
+
     self.popupType = data.popupType
-    self.gui = UI:WaitForChild(uiName):Clone()
-    self.gui.Enabled = false
     self.frame = self.gui[self.popupType]
     self.okay = self.frame.Accept
     self.frame.Visible = true
-    self.gui.Parent = self.playerGui
 
     Interface.Blur(50)
     Interface.Toggle(self.gui, self.popupType)

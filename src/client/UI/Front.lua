@@ -1,7 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ReplicatedFirst = game:GetService("ReplicatedFirst")
-
-local UI = ReplicatedFirst:WaitForChild("UI")
 
 local Knit = require(ReplicatedStorage.Packages.Knit)
 local Web = require(ReplicatedStorage.Packages.Web)
@@ -78,13 +75,17 @@ function Front:MenuButtons()
         end
     end)
     Interface.Button(self.playerGui.Front.Frame.Frame.Feedback, function()
-        if not self.menuOpen then return end
         Knit.toggle("Feedback")
-    end)
+    end, function() return (not self.menuOpen) end)
     Interface.Button(self.playerGui.Front.Frame.Frame.Quests, function()
-        if not self.menuOpen then return end
         Knit.toggle("Quests")
-    end)
+    end, function() return (not self.menuOpen) end)
+    Interface.Button(self.playerGui.Front.Frame.Frame.Inventory, function()
+        Knit.toggle("Inventory")
+    end, function() return (not self.menuOpen) end)
+    Interface.Button(self.playerGui.Front.Frame.Frame.Shop, function()
+        Knit.toggle("Shop")
+    end, function() return (not self.menuOpen) end)
 end
 
 function Front.new()
@@ -92,11 +93,7 @@ function Front.new()
 
     self.janitor = Janitor.new()
 
-    self.player = game.Players.LocalPlayer
-    self.playerGui = self.player.PlayerGui
-
-    self.gui = UI:WaitForChild("Front"):Clone()
-    self.gui.Parent = self.playerGui
+    Interface.Setup(self, "Front", true)
 
     self.menuOpen = false
 

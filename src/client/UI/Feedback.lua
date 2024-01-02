@@ -1,7 +1,4 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ReplicatedFirst = game:GetService("ReplicatedFirst")
-
-local UI = ReplicatedFirst:WaitForChild("UI")
 
 local Knit = require(ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Knit"))
 local Interface = require(ReplicatedStorage.Packages.Interface)
@@ -11,17 +8,13 @@ local UserFeedback = require(ReplicatedStorage.Events.Feedback.UserFeedback):Cli
 local Feedback = {}
 Feedback.__index = Feedback
 
-function Feedback.new(uiName, data)
+function Feedback.new(uiName)
     local self = setmetatable({}, Feedback)
 
-    self.player = game.Players.LocalPlayer
-    self.playerGui = self.player.PlayerGui
-    self.gui = UI:WaitForChild(uiName):Clone()
-    self.gui.Enabled = false
-    self.gui.Parent = self.playerGui
+    Interface.Setup(self, uiName)
+    Interface.XButton(self.gui, uiName)
 
-    self.min = 20
-    self.max = 250
+    self.min,self.max = 20, 250
 
     local textbox = self.playerGui.Feedback.Frame.Background.TextBox
     local chrcount = self.playerGui.Feedback.Frame.Background.TextLabel
@@ -53,8 +46,6 @@ function Feedback.new(uiName, data)
         Knit.openui[uiName]:Destroy()
         Knit.openui[uiName] = nil
     end)
-
-    Interface.XButton(self.gui, uiName)
 
     Interface.Toggle(self.gui)
 
